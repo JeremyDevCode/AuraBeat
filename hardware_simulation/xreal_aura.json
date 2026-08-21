@@ -1,0 +1,82 @@
+{
+  "deviceName": "XREAL Aura",
+  "category": "AR Smart Glasses (Optical See-Through)",
+  "releaseTarget": "Fall 2026",
+  "estimatedPrice": "Under $1,500 USD (base model, pre-tax)",
+  "launchRegions": ["United States", "United Kingdom", "Japan", "Canada", "South Korea"],
+
+  "computeArchitecture": {
+    "type": "Split-Compute (Lightweight Glasses + Tethered Compute Puck via USB-C Cable)",
+    "glassesChip": "XREAL X1S Spatial Coprocessor (handles low-latency display output, sensor fusion, hand tracking pipeline)",
+    "puckChip": "Qualcomm Snapdragon Reality Elite Platform (runs Android XR OS, AI/ML inference, heavy rendering)",
+    "configurations": [
+      { "ram": "12GB LPDDR5", "storage": "256GB" },
+      { "ram": "16GB LPDDR5", "storage": "512GB" }
+    ],
+    "batteryCapacity": "4,455 mAh (34.84 Wh) — located in Compute Puck",
+    "tdp": "~10W – 15W (Compute Puck)",
+    "tether": "USB-C cable between glasses and puck"
+  },
+
+  "displayAndOptics": {
+    "panelType": "Dual Sony Micro-OLED",
+    "resolutionPerEye": "1920 x 1200 pixels",
+    "aspectRatio": "16:10 (WUXGA per eye)",
+    "combinedResolution": "3840 x 1200 pixels (total)",
+    "fieldOfView": {
+      "diagonal": "70°",
+      "horizontal": "61°",
+      "vertical": "39°"
+    },
+    "refreshRate": "120 Hz",
+    "ppd": 31.5,
+    "dimming": "5-Level Electrochromic Transparency Dimming (adjustable lens opacity for focus)",
+    "opticsType": "Waveguide Optics",
+    "visionCorrection": "Interchangeable prescription lens inserts (accessory)",
+    "ipd": "Software-adjustable IPD (optical shift via coprocessor)"
+  },
+
+  "physicalAttributes": {
+    "glassesWeight": "Under 95g (approximately ~80g per technical breakdowns)",
+    "formFactor": "Smart Glasses (conventional glasses form factor)"
+  },
+
+  "connectivity": {
+    "glassesToPuck": "USB-C tether (low-latency DisplayPort signal + power)",
+    "puckWifi": "Wi-Fi 6 / Wi-Fi 6E (802.11ax)",
+    "puckBluetooth": "Bluetooth 5.3",
+    "puckUsb": "USB-C with DisplayPort-In (allows tethering to PCs, laptops, handheld consoles like Steam Deck / ROG Ally)"
+  },
+
+  "audio": {
+    "speakers": "Built-in open-ear spatial audio speakers",
+    "tuning": "Bose-tuned spatial audio",
+    "microphones": "4-microphone array (beamforming)"
+  },
+
+  "sensorsAndTracking": {
+    "trackingDegreesOfFreedom": "6DoF Spatial Anchoring",
+    "worldCameras": 2,
+    "cameraType": "World-facing spatial tracking cameras",
+    "privacyIndicator": "Hardware active camera LED indicator (physical privacy signal)",
+    "primaryInput": "Low-latency bare-hand gesture tracking (Hand Engine pipeline via X1S coprocessor)"
+  },
+
+  "softwareAndEcosystem": {
+    "os": "Google Android XR",
+    "aiIntegration": "Native Google Gemini multimodal spatial perception",
+    "multitasking": "Up to 5 spatial window panes simultaneously",
+    "compatibleHosts": ["Snapdragon Reality Elite Compute Puck", "External PC / Mac via DisplayPort-In", "Steam Deck / ROG Ally via USB-C DP"]
+  },
+
+  "simulationProfile": {
+    "latencyMs": 8.4,
+    "speedFactor": 0.45,
+    "note": "Fastest execution device in the AuraBeat hardware matrix. Snapdragon Reality Elite + X1S dual-chip split-compute delivers the highest sustained XR throughput.",
+    "xrBenchmarkScore": 98,
+    "fovClass": "fov-xreal",
+    "appFovKey": "xreal",
+    "ppdWarningRequired": false,
+    "storageSimPath": "/storage/emulated/0/AuraBeat/Songs/"
+  }
+}

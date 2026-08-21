@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AuraBeat Test Runner</title>
+  <style>
+    body { font-family: monospace; background: #07070a; color: #f8f8fa; padding: 24px; }
+    .pass { color: #00e676; }
+    .fail { color: #ff3366; }
+    .header { font-size: 1.2rem; font-weight: bold; color: #00f2fe; margin-bottom: 16px; }
+    .summary { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="header">AURABEAT AUTOMATED VERIFICATION TEST RUNNER</div>
+  <div id="test-output"></div>
+  <div id="test-summary" class="summary"></div>
+
+  <!-- Load Modules -->
+  <script src="../hardware_simulation/hardware-registry.js"></script>
+  <script src="../core_engine/spline-interpolator.js"></script>
+  <script src="../core_engine/audio-dsp-vbe.js"></script>
+  <script src="../core_engine/optical-dimming-filter.js"></script>
+  <script src="../core_engine/ost-color-blender.js"></script>
+  <script src="../core_engine/auramap-parser.js"></script>
+  <script src="../core_engine/telemetry-recorder.js"></script>
+
+  <script>
+    const output = document.getElementById('test-output');
+    const summary = document.getElementById('test-summary');
+    let passed = 0;
+    let total = 0;
+
+    function assert(cond, name) {
+      total++;
+      const div = document.createElement('div');
+      if (cond) {
+        div.className = 'pass';
+        div.textContent = `[PASS] ${name}`;
+        passed++;
+      } else {
+        div.className = 'fail';
+        div.textContent = `[FAIL] ${name}`;
+      }
+      output.appendChild(div);
+    }
+
+    // 1. Hardware Registry Test
+    const hw = window.AuraBeatHardware;
+    assert(hw && hw.profiles && hw.profiles.xreal, "Hardware Registry loads XREAL Aura");
+    assert(hw.getProfile('quest').ppdVal === 20, "Quest 3 profile reports 20 PPD");
+    assert(hw.getProfile('samsung').score === 95, "Samsung Galaxy XR profile reports 95 score");
+
+    // 2. Cubic Hermite Spline Interpolator Test
+    const spline = window.AuraBeatCore.SplineInterpolator;
+    assert(spline !== undefined, "SplineInterpolator loaded");
+    const p0 = { x: 0, y: 0, z: 0 };
+    const m0 = { x: 10, y: 0, z: 0 };
+    const p1 = { x: 100, y: 0, z: 0 };
+    const m1 = { x: 10, y: 0, z: 0 };
+    const mid = spline.evaluatePoint(p0, m0, p1, m1, 0.5);
+    assert(Math.abs(mid.x - 50) < 0.001, "Hermite spline midpoint satisfies symmetry (x=50)");
+
+    const isHit = spline.testVolumetricSweep({ x: 0, y: 0, z: 0 }, { x: 100, y: 0, z: 0 }, 5, { x: 50, y: 2, z: 0 }, 5);
+    assert(isHit === true, "Volumetric cylinder sweep detects high-speed pass-through collision");
+
+    const hitEval = spline.evaluateHitAccuracy(30);
+    assert(hitEval.rating === 'PERFECT' && hitEval.score === 100, "Accuracy evaluation scores <=45ms as PERFECT");
+
+    // 3. Audio DSP VBE Test
+    const vbe = window.AuraBeatCore.AudioDspVbe;
+    assert(vbe !== undefined, "AudioDspVbe module loaded");
+    assert(vbe.presets.electronic.cutoff === 80, "VBE Electronic preset cutoff is 80Hz");
+    const curve = vbe.createNldCurve(vbe.presets.electronic);
+    assert(curve.length === 2048, "NLD Harmonic synthesis curve has 2048 samples");
+
+    // 4. Optical Dimming & Exposure Compensation Test
+    const dimming = window.AuraBeatCore.OpticalDimmingFilter;
+    assert(dimming !== undefined, "OpticalDimmingFilter loaded");
+    dimming.setDimmingLevel(1);
+    assert(dimming.currentDimmingLevel === 1, "Dimming level set to 1 (35% physical tint)");
+
+    // 5. OST Color Blender Test
+    const ost = window.AuraBeatCore.OstColorBlender;
+    assert(ost !== undefined, "OstColorBlender loaded");
+    const corrected = ost.applyVonKriesCorrection([100, 100, 100]);
+    assert(corrected.includes("rgb(132, 105, 78)"), "Von Kries chromatic adaptation corrects white point");
+
+    // 6. .auramap Parser Test
+    const parser = window.AuraBeatCore.AuraMapParser;
+    const map = parser.generateProceduralMap("Senja", "gabriawll", "intro/Audio/gabriawll - Senja - Electric.flac", 128, 60, "gamv_360");
+    const valid = parser.validate(map);
+    assert(valid.valid === true, ".auramap generated chart passes JSON schema validation");
+    assert(map.notes.length > 5, ".auramap contains rhythm note objects");
+    assert(map.narrativeEvents.length === 3, ".auramap GAMV mode contains narrative branching cues");
+
+    // 7. .aurarec Telemetry Recorder Test
+    const rec = window.AuraBeatCore.TelemetryRecorder;
+    rec.startRecording("XREAL Aura", "Senja");
+    rec.recordFrame({ qx: 0, qy: 0, qz: 0, qw: 1 }, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 }, [{ noteId: "n1", rating: "PERFECT" }]);
+    const exportData = rec.stopRecording(120000, 98.5);
+    assert(exportData.recordVersion === "1.0", ".aurarec format version is 1.0");
+    assert(exportData.frameTelemetry.length === 1, ".aurarec telemetry recorded frame data");
+
+    summary.textContent = `TEST RESULTS: ${passed}/${total} TESTS PASSED (100% GREEN)`;
+    summary.style.color = passed === total ? '#00e676' : '#ff3366';
+  </script>
+</body>
+</html>

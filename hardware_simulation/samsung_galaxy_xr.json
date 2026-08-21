@@ -1,0 +1,96 @@
+{
+  "deviceName": "Samsung Galaxy XR",
+  "category": "Premium XR Headset (Passthrough Mixed Reality)",
+  "releaseDate": "October 21, 2025",
+  "developedWith": ["Google (Android XR OS)", "Qualcomm (Snapdragon platform)"],
+  "role": "Launch flagship for the Android XR operating system platform",
+
+  "computeArchitecture": {
+    "type": "Integrated Standalone Active-Cooled Headset",
+    "primarySoC": "Qualcomm Snapdragon XR2+ Gen 2",
+    "npuAndIsp": "Hexagon NPU (AI inference) + Dual ISP (image signal processing for 12 cameras)",
+    "ram": "16GB LPDDR5",
+    "storage": "256GB (single configuration)",
+    "battery": "External battery belt pack (tethered via cable to headset)",
+    "batteryLife": "Approximately 2 hours (general mixed reality use)",
+    "batteryPackWeight": "302g (external belt pack)",
+    "tdp": "~15W – 18W (active fan cooling integrated)",
+    "cooling": "Active fan cooling system"
+  },
+
+  "displayAndOptics": {
+    "panelType": "Dual Micro-OLED (ultra-high resolution per eye)",
+    "resolutionPerEye": "3552 x 3840 pixels",
+    "aspectRatio": "3552:3840 (Near-Square 16:17 per eye)",
+    "totalResolution": "~27 megapixels combined",
+    "fieldOfView": {
+      "diagonal": "118°",
+      "horizontal": "109°",
+      "vertical": "100°"
+    },
+    "refreshRate": "Up to 90 Hz (60 / 72 / 90 Hz modes)",
+    "ppd": 32.5,
+    "opticsType": "Pancake Lens Optics (compact folded optical path)",
+    "passthroughCameras": "2x 6.5 MP RGB passthrough cameras (full-color mixed reality view)",
+    "visionCorrection": "Magnetic prescription lens insert support (EyeBuyDirect partnership)"
+  },
+
+  "physicalAttributes": {
+    "headsetWeight": "545g (19 oz)",
+    "formFactor": "Over-head strap XR headset with external belt battery"
+  },
+
+  "connectivity": {
+    "wifi": "Wi-Fi 7 (802.11be)",
+    "bluetooth": "Bluetooth 5.4",
+    "usbC": "USB-C (charging, data, PC streaming)",
+    "wirelessPC": "Wi-Fi 7 AirLink-equivalent wireless PC streaming"
+  },
+
+  "audio": {
+    "speakers": "Two 2-way speakers (stereo spatial audio)",
+    "microphones": "6-microphone array (spatial voice capture)"
+  },
+
+  "sensorsAndTracking": {
+    "trackingDegreesOfFreedom": "6DoF inside-out positional tracking",
+    "totalCameraCount": 12,
+    "outerTrackingCameras": "6x outer tracking cameras (360° room-scale tracking)",
+    "passthroughCameras": "2x 6.5 MP RGB cameras (color MR passthrough)",
+    "innerEyeTrackingCameras": "4x inner eye-tracking cameras (per-eye foveal rendering)",
+    "features": [
+      "Full hand tracking (bare-hand pinch gestures)",
+      "Eye tracking (gaze-based foveated rendering)",
+      "Iris recognition (biometric authentication)",
+      "Depth sensing for spatial awareness",
+      "6DoF motion controllers (optional)"
+    ],
+    "primaryInput": "Eye tracking + bare-hand pinch gestures + voice"
+  },
+
+  "softwareAndEcosystem": {
+    "os": "Android XR / Samsung One UI Spatial",
+    "aiIntegration": [
+      "Google Gemini (spatial AI assistant)",
+      "Samsung Galaxy AI"
+    ],
+    "features": [
+      "Full-color MR passthrough (real world overlay)",
+      "Android XR app ecosystem",
+      "6DoF inside-out room-scale tracking",
+      "Iris authentication",
+      "Foveated rendering via eye tracking"
+    ]
+  },
+
+  "simulationProfile": {
+    "latencyMs": 5.8,
+    "speedFactor": 0.70,
+    "note": "Second fastest in the AuraBeat matrix. High-performance Snapdragon XR2+ Gen 2 with Hexagon NPU enables fast sensor fusion and low-latency spatial rendering. Slowed slightly by external battery pack communication overhead.",
+    "xrBenchmarkScore": 95,
+    "fovClass": "fov-samsung",
+    "appFovKey": "samsung",
+    "ppdWarningRequired": false,
+    "storageSimPath": "/storage/emulated/0/AuraBeat/Songs/"
+  }
+}

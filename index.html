@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraBeat - Spatial Rhythm Launcher</title>
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="theme-hyperos dark-mode">
+
+  <!-- Spatial Beat Canvas -->
+  <canvas id="spatial-canvas"></canvas>
+
+  <!-- 16:9 Aspect Ratio & Fullscreen Warning Toast Banner -->
+  <div id="aspect-warning-banner" class="aspect-warning-banner hidden">
+    <i class="ri-error-warning-line text-accent"></i>
+    <span><strong>16:9 Aspect Lock:</strong> Press <strong>F11</strong> for browser Fullscreen Mode to ensure accurate
+      AR FOV simulation.</span>
+    <button id="toast-fullscreen-btn" class="toast-btn"><i class="ri-fullscreen-line"></i> F11 Fullscreen</button>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="app" class="app-container fov-xreal-active">
+
+    <!-- FLOATING DYNAMIC CAPSULE SIMULATOR CONTROLLER -->
+    <div id="sim-capsule-root" class="sim-capsule-root">
+      <!-- IDLE / HOVER CAPSULE BUTTON -->
+      <button id="sim-dynamic-capsule" class="sim-dynamic-capsule" title="Click to open Simulation & Hardware Controls">
+        <div class="capsule-logo">
+          <span class="capsule-pulse-dot"></span>
+          <span class="capsule-title">AuraBeat</span>
+        </div>
+        <div class="capsule-divider"></div>
+        <div class="capsule-device">
+          <i class="ri-glasses-line text-accent"></i>
+          <span id="capsule-device-name">XREAL Aura (70°)</span>
+        </div>
+        <div class="capsule-chevron">
+          <i class="ri-arrow-down-s-line"></i>
+        </div>
+      </button>
+
+      <!-- MORPHING SIMULATION CONTROL DRAWER (FLOATING FROSTED GLASS PANEL) -->
+      <div id="sim-control-drawer" class="sim-control-drawer hidden">
+        <div class="drawer-top-bar">
+          <div class="drawer-brand">
+            <span class="drawer-dot"></span>
+            <h4>Hardware & Spatial Simulation</h4>
+          </div>
+          <button id="btn-close-sim-drawer" class="drawer-close-btn" title="Close Simulation Menu (Esc)">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <!-- Target Hardware Device Switcher -->
+        <div class="drawer-section">
+          <div class="drawer-section-label">
+            <i class="ri-device-line text-accent"></i> Target Hardware Profile
+          </div>
+          <div class="drawer-device-grid">
+            <button class="device-pill active" data-device="xreal">
+              <span class="pill-name">XREAL Aura</span>
+              <span class="pill-spec">70° FOV • 31.5 PPD</span>
+            </button>
+            <button class="device-pill" data-device="viture">
+              <span class="pill-name">VITURE Luma</span>
+              <span class="pill-spec">52° FOV • 44.6 PPD</span>
+            </button>
+            <button class="device-pill" data-device="samsung">
+              <span class="pill-name">Samsung XR</span>
+              <span class="pill-spec">118° FOV • 32.5 PPD</span>
+            </button>
+            <button class="device-pill" data-device="quest">
+              <span class="pill-name">Quest 3</span>
+              <span class="pill-spec">110° FOV • 20 PPD</span>
+            </button>
+            <button class="device-pill" data-device="quest3s">
+              <span class="pill-name">Quest 3S</span>
+              <span class="pill-spec">104° FOV • 20 PPD</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Background Music Player Widget -->
+        <div class="drawer-section">
+          <div class="drawer-section-label">
+            <i class="ri-disc-line text-accent"></i> Background Music Player
+          </div>
+          <div class="drawer-bgm-card squircle">
+            <div class="bgm-track-meta">
+              <div class="bgm-disc-spin"><i class="ri-music-2-fill text-accent"></i></div>
+              <div class="bgm-text-column">
+                <span id="bgm-track-title" class="bgm-title">Glow</span>
+                <span id="bgm-track-artist" class="bgm-artist">MA：RK</span>
+              </div>
+            </div>
+            <div class="bgm-player-actions">
+              <div class="bgm-transport-row">
+                <button id="btn-bgm-shuffle" class="bgm-ctrl-btn bgm-shuffle-btn" title="Shuffle Mode"><i class="ri-shuffle-line"></i></button>
+                <button id="btn-bgm-prev" class="bgm-ctrl-btn" title="Previous Track"><i class="ri-skip-back-fill"></i></button>
+                <button id="btn-bgm-play-pause" class="bgm-ctrl-btn bgm-play-btn" title="Play / Pause"><i class="ri-play-fill"></i></button>
+                <button id="btn-bgm-next" class="bgm-ctrl-btn" title="Next Track"><i class="ri-skip-forward-fill"></i></button>
+                <button id="btn-bgm-repeat" class="bgm-ctrl-btn bgm-repeat-btn active-all" title="Repeat: All Tracks"><i class="ri-repeat-line"></i></button>
+                <button id="btn-bgm-dice" class="bgm-ctrl-btn bgm-dice-btn" title="Roll Random Track"><i class="ri-dice-line"></i></button>
+              </div>
+              <div class="bgm-volume-row">
+                <i class="ri-volume-down-line text-muted"></i>
+                <input type="range" id="slider-bgm-volume" min="0" max="100" value="25" class="bgm-volume-slider" title="Volume">
+                <span id="bgm-volume-val" class="bgm-vol-text">25%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Quick Toggles -->
+        <div class="drawer-section">
+          <div class="drawer-section-label">
+            <i class="ri-settings-4-line text-accent"></i> Optics & Controls
+          </div>
+          <div class="drawer-toggles-grid">
+            <!-- FOV Frame Toggle -->
+            <button id="toggle-fov-btn" class="drawer-action-btn active-btn" title="Toggle Optical FOV Lens Mask vs Full Unclipped Mode">
+              <i class="ri-aspect-ratio-line text-accent"></i>
+              <div class="action-text">
+                <span class="action-title">FOV Lens Frame</span>
+                <span id="fov-status-desc" class="action-sub">Optical Mask ON</span>
+              </div>
+            </button>
+
+            <!-- 3D Camera Reset -->
+            <button id="reset-camera-btn" class="drawer-action-btn" title="Reset 3D Head-Look to (0°, 0°)">
+              <i class="ri-compass-3-line text-accent"></i>
+              <div class="action-text">
+                <span class="action-title">3D Camera Reset</span>
+                <span class="action-sub"><span id="camera-yaw-readout">0°</span>, <span id="camera-pitch-readout">0°</span></span>
+              </div>
+            </button>
+
+            <!-- Restart Sequence -->
+            <button id="reset-flow-btn" class="drawer-action-btn" title="Restart Launcher Sequence">
+              <i class="ri-refresh-line text-accent"></i>
+              <div class="action-text">
+                <span class="action-title">Restart Intro</span>
+                <span class="action-sub">Replay Flow</span>
+              </div>
+            </button>
+
+            <!-- FOSS PoC Notice -->
+            <button id="open-foss-btn" class="drawer-action-btn" title="View FOSS License & PoC Information">
+              <i class="ri-code-s-slash-line text-accent"></i>
+              <div class="action-text">
+                <span class="action-title">FOSS PoC Notice</span>
+                <span class="action-sub">MIT / Apache-2.0</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIXED 16:9 ASPECT RATIO SIMULATION VIEWPORT (WRAPPED IN 3D PERSPECTIVE CONTAINER) -->
+    <div id="app-viewport-perspective-wrapper" class="viewport-perspective-wrapper">
+      <main class="stage-viewport">
+
+        <!-- AR/XR Device FOV Simulation Overlay Frame (BODY-LOCKED TO HEADSET LENS) -->
+        <div id="ar-fov-frame" class="fov-frame fov-xreal">
+          <div class="fov-border"></div>
+          <div class="fov-badge">
+            <i class="ri-glasses-line"></i>
+            <span id="fov-device-name">XREAL Aura (61°H × 39°V | 70° Diagonal | ~31.5 PPD)</span>
+            <span class="locked-note"><i class="ri-compass-3-line text-accent"></i> 3D Head-Look (Right-Click Drag to Rotate)</span>
+          </div>
+
+          <!-- HARD OPTICAL DISPLAY APERTURE (Masks Virtual Content Inside Physical Lens Frame) -->
+          <div class="fov-optical-viewport">
+            <!-- 3DOF WORLD-ANCHORED SPATIAL WORLD RIG (Populated by intro/ process modules) -->
+            <div id="spatial-world-rig" class="spatial-world-rig"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- MANDATORY FULLSCREEN (F11) & 16:9 ASPECT LOCK MODAL -->
+    <div id="fullscreen-lock-modal" class="settings-modal-overlay hidden" style="z-index: 1000;">
+      <div class="squircle-card settings-drawer spring-pop text-center" style="max-width: 520px; padding: 28px;">
+        <div class="drawer-header justify-center" style="margin-bottom: 12px;">
+          <div class="drawer-title">
+            <i class="ri-aspect-ratio-line text-accent" style="font-size: 1.8rem;"></i>
+            <h3>Fullscreen & 16:9 Aspect Lock</h3>
+          </div>
+        </div>
+        <div class="drawer-body" style="margin-bottom: 20px;">
+          <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 14px;">
+            For accurate AR FOV spatial simulation on a 2D widescreen display, please press <strong>F11</strong> (or Fn
+            + F11) on your keyboard to enter browser Fullscreen Widescreen Mode, or click below.
+          </p>
+          <!-- Hardware Aspect Ratio Disclaimer Explanation -->
+          <div
+            style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25); padding: 12px 14px; border-radius: 12px; text-align: left; font-size: 0.8rem; color: var(--accent-cyan); line-height: 1.45;">
+            <i class="ri-information-line"></i> <strong>Hardware Aspect Ratio Disclaimer:</strong> Target AR smart glasses
+            (such as XREAL Aura and VITURE Luma Ultra) feature 16:10 aspect ratio Micro-OLED displays (1920×1200 per eye),
+            while VR/MR headsets (such as Samsung XR, Quest 3, and Quest 3S) feature near-square optics (~15:16). Locking your browser to 16:9 widescreen mode provides the standard baseline viewport to simulate all target hardware optics, FOV bounding frames, and spatial UI coordinates without geometric stretching or pillarboxing.
+          </div>
+        </div>
+        <div class="drawer-footer justify-center">
+          <button id="btn-request-fullscreen" class="btn-primary squircle-btn spring-btn">
+            <i class="ri-fullscreen-line"></i> Enter Fullscreen (F11)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HYPEROS SETTINGS MODAL DRAWER -->
+    <div id="settings-modal" class="settings-modal-overlay hidden">
+      <div class="squircle-card settings-drawer spring-pop">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <i class="ri-settings-4-line"></i>
+            <h3>HyperOS 2.0 UI Settings</h3>
+          </div>
+          <button id="close-settings-btn" class="icon-btn"><i class="ri-close-line"></i></button>
+        </div>
+
+        <div class="drawer-body">
+          <div class="setting-row">
+            <div class="setting-meta">
+              <label>Superellipse Squircle Smoothness</label>
+              <small>Adjust curvature aggressiveness of HyperOS tiles</small>
+            </div>
+            <input type="range" id="slider-squircle" min="16" max="36" value="26">
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-meta">
+              <label>Background Glassmorphism Blur</label>
+              <small>Set backdrop blur intensity for IPS screen simulation</small>
+            </div>
+            <input type="range" id="slider-blur" min="0" max="40" value="20">
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-meta">
+              <label>2D Display Calibration Mode</label>
+              <small>Optimize contrast for IPS displays</small>
+            </div>
+            <select id="select-display-mode" class="hyperos-select">
+              <option value="high-contrast">High Contrast (Recommended for IPS)</option>
+              <option value="ar-transparent">Simulated AR Transparency</option>
+              <option value="pure-dark">Deep Volcanic Dark</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="drawer-footer">
+          <button id="save-settings-btn" class="btn-primary squircle-btn spring-btn">Save Preferences</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPREHENSIVE FOSS DEVELOPER NOTICE MODAL -->
+    <div id="foss-modal" class="settings-modal-overlay hidden">
+      <div class="squircle-card settings-drawer spring-pop" style="max-width: 580px;">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <i class="ri-code-s-slash-line"></i>
+            <h3>FOSS Open-Source Developer Notice</h3>
+          </div>
+          <button id="close-foss-btn" class="icon-btn"><i class="ri-close-line"></i></button>
+        </div>
+
+        <div class="drawer-body">
+          <div class="foss-content">
+            <span class="pill-badge info" style="margin-bottom: 14px; display: inline-flex;"><i
+                class="ri-shield-check-line"></i> MIT Licensed • Open Source Concept Repository</span>
+            <p><strong>AuraBeat</strong> is a spatial rhythm engine concept designed for AR smart glasses and spatial XR headsets. In this proof-of-concept prototype, the spatial UI/UX framework, FOV calibration models, and interaction paradigms are simulated on 2D widescreen displays. This design structure serves as the foundation to be deployed and optimized on physical spatial devices—such as the XREAL Aura, VITURE Luma Ultra, Samsung XR, and Meta Quest headsets—as developer hardware becomes available to test on physical optics.</p>
+            <br>
+            <p>Currently simulated on 2D screens, the underlying spatial audio mechanics, 6DoF hand tracking, and spatial mesh anchoring are mapped via telemetry profiles. <strong>Active development is ongoing</strong>, with full on-device hardware integration, low-latency spatial rendering, and physical sensor tuning scheduled to commence upon receiving target physical hardware during upcoming developer access cohorts.</p>
+          </div>
+        </div>
+
+        <div class="drawer-footer">
+          <button id="dismiss-foss-btn" class="btn-primary squircle-btn spring-btn">Proceed to AuraBeat</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HARDWARE PROFILE CHANGE RESTART MODAL -->
+    <div id="restart-modal" class="settings-modal-overlay hidden">
+      <div class="squircle-card settings-drawer spring-pop text-center" style="max-width: 420px;">
+        <div class="drawer-header justify-center">
+          <div class="drawer-title">
+            <i class="ri-restart-line spin"></i>
+            <h3>Re-Calibrating Engine</h3>
+          </div>
+        </div>
+        <div class="drawer-body">
+          <p id="restart-modal-msg">Target hardware changed. Re-calibrating FOV optics & restarting sequence...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Target Hardware Specifications & Simulation Profiles -->
+  <script src="hardware_simulation/hardware-registry.js"></script>
+  <script src="hardware_simulation/bgm-player.js"></script>
+  <script src="hardware_simulation/hardware-drawer.js"></script>
+
+  <!-- Modularized Intro & View Process Pipeline -->
+  <script src="intro/stage-loader.js"></script>
+  <script src="intro/stage-intro.js"></script>
+  <script src="intro/system-indexer.js"></script>
+  <script src="intro/benchmark-auth.js"></script>
+  <script src="intro/diagnostic-benchmark.js"></script>
+  <script src="intro/ui-selection.js"></script>
+  <script src="intro/intro-manager.js"></script>
+
+  <!-- Modularized Spatial 3D Engine -->
+  <script src="spatial_engine/camera-controller.js"></script>
+  <script src="spatial_engine/viewport-3d-renderer.js"></script>
+  <script src="spatial_engine/spatial-grid-canvas.js"></script>
+  <script src="spatial_engine/spatial-manager.js"></script>
+
+  <!-- Core Mathematical, Audio DSP & Optics Subsystems -->
+  <script src="core_engine/spline-interpolator.js"></script>
+  <script src="core_engine/audio-dsp-vbe.js"></script>
+  <script src="core_engine/optical-dimming-filter.js"></script>
+  <script src="core_engine/ost-color-blender.js"></script>
+  <script src="core_engine/auramap-parser.js"></script>
+  <script src="core_engine/telemetry-recorder.js"></script>
+
+  <!-- Native HTML5 Direct Audio Pipeline (Lossless FLAC & MP3) -->
+  <audio id="bgm-audio-node" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

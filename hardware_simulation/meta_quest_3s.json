@@ -1,0 +1,90 @@
+{
+  "deviceName": "Meta Quest 3S",
+  "category": "Standalone VR / Mixed Reality Headset (Color Passthrough)",
+  "releaseDate": "Fall 2024",
+  "price": "$299 (128GB) USD",
+
+  "computeArchitecture": {
+    "type": "Integrated Standalone Active-Cooled Headset",
+    "primarySoC": "Qualcomm Snapdragon XR2 Gen 2",
+    "coprocessor": "Integrated Sensor Hub",
+    "ram": "8GB LPDDR5",
+    "storage": ["128GB", "256GB"],
+    "batteryCapacity": "4,324 mAh",
+    "batteryLife": "Approximately 2.5 hours",
+    "tdp": "~10W – 12W (active fan cooling)",
+    "cooling": "Active fan cooling"
+  },
+
+  "displayAndOptics": {
+    "panelType": "Single Fast-Switch LCD",
+    "resolutionPerEye": "1832 x 1920 pixels",
+    "aspectRatio": "1832:1920 (Near-Square 23:24 per eye)",
+    "combinedResolution": "3664 x 1920 pixels (total)",
+    "fieldOfView": {
+      "diagonal": "104°",
+      "horizontal": "96°",
+      "vertical": "90°"
+    },
+    "refreshRate": "90 / 120 Hz",
+    "ppd": 20.0,
+    "opticsType": "Fresnel Lenses",
+    "passthroughCameras": "2x RGB cameras (color MR passthrough)",
+    "ipd": "58, 63, 68 mm (3-position physical adjustment)",
+    "visionCorrection": "Glasses spacer included"
+  },
+
+  "physicalAttributes": {
+    "weight": "514g",
+    "dimensions": "191.5 x 102 x 295.5 mm (with strap)",
+    "formFactor": "Head-mounted VR/MR headset"
+  },
+
+  "connectivity": {
+    "wifi": "Wi-Fi 6E",
+    "bluetooth": "Bluetooth 5.2 LE",
+    "usbC": "USB Type-C (USB 3.0)",
+    "wirelessPC": "AirLink / Virtual Desktop via Wi-Fi 6E"
+  },
+
+  "audio": {
+    "speakers": "Integrated open-ear stereo speakers",
+    "microphones": "Integrated microphone array",
+    "headphoneJack": "No 3.5mm jack"
+  },
+
+  "sensorsAndTracking": {
+    "trackingDegreesOfFreedom": "6DoF inside-out positional tracking",
+    "trackingCameras": "4x mono cameras (2 front, 2 side/bottom)",
+    "passthroughCameras": "2x RGB cameras",
+    "depthSensor": "No dedicated depth projector",
+    "features": [
+      "Bare-hand direct touch tracking",
+      "Color passthrough mixed reality",
+      "Touch Plus controllers"
+    ],
+    "primaryInput": "Touch Plus controllers + hand tracking"
+  },
+
+  "softwareAndEcosystem": {
+    "os": "Meta Horizon OS",
+    "appStore": "Meta Quest Store + App Lab + SideQuest",
+    "pcVR": "Oculus Link / AirLink",
+    "features": [
+      "Direct Touch hand engine",
+      "Color mixed reality passthrough"
+    ]
+  },
+
+  "simulationProfile": {
+    "latencyMs": 9.8,
+    "speedFactor": 1.05,
+    "note": "Budget entry in the AuraBeat matrix. Features the same XR2 Gen 2 as Quest 3 but with Fresnel lenses and slightly narrower FOV.",
+    "xrBenchmarkScore": 86,
+    "fovClass": "fov-quest3s",
+    "appFovKey": "quest3s",
+    "ppdWarningRequired": true,
+    "ppdWarningNote": "Display density is ~20.0 PPD. AuraBeat automatically expands UI font size by +14%.",
+    "storageSimPath": "/storage/emulated/0/AuraBeat/Songs/"
+  }
+}

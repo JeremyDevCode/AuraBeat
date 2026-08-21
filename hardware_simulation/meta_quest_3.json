@@ -1,0 +1,94 @@
+{
+  "deviceName": "Meta Quest 3",
+  "category": "Standalone VR / Mixed Reality Headset (Color Passthrough)",
+  "releaseDate": "October 10, 2023",
+  "price": "$499 (128GB) / $649 (512GB) USD",
+
+  "computeArchitecture": {
+    "type": "Integrated Standalone Active-Cooled Headset",
+    "primarySoC": "Qualcomm Snapdragon XR2 Gen 2",
+    "coprocessor": "Integrated Sensor Hub (handles IMU, controller tracking, mixed reality depth)",
+    "ram": "8GB LPDDR5 (68 GB/s memory bandwidth)",
+    "storage": ["128GB", "512GB"],
+    "batteryCapacity": "5,060 mAh (19.44 Wh) — built-in headset battery",
+    "batteryLife": "Approximately 2.2 hours (VR games) / 3+ hours (media)",
+    "tdp": "~10W – 12W (active fan cooling)",
+    "cooling": "Active fan cooling with thermal dissipation channels"
+  },
+
+  "displayAndOptics": {
+    "panelType": "Dual Fast-Switch LCD",
+    "resolutionPerEye": "2064 x 2208 pixels",
+    "aspectRatio": "2064:2208 (Near-Square 15:16 per eye)",
+    "combinedResolution": "4128 x 2208 pixels (total)",
+    "fieldOfView": {
+      "diagonal": "110°",
+      "horizontal": "103.8°",
+      "vertical": "96.4°"
+    },
+    "refreshRate": "72 / 90 / 120 Hz",
+    "ppd": 20.0,
+    "opticsType": "Pancake Lenses (folded optics — thinner than Fresnel)",
+    "passthroughCameras": "2x high-resolution RGB cameras (full-color mixed reality passthrough)",
+    "ipd": "58 – 71 mm (physical IPD adjustment slider)",
+    "visionCorrection": "Third-party magnetic prescription lens inserts (Zenni Optical, FramesDirect partnership)"
+  },
+
+  "physicalAttributes": {
+    "weight": "515g (18.2 oz)",
+    "dimensions": "184 x 160 x 98 mm",
+    "formFactor": "Head-mounted VR/MR headset with integrated head strap"
+  },
+
+  "connectivity": {
+    "wifi": "Wi-Fi 6E (802.11ax — 6 GHz band for low-latency wireless PC streaming)",
+    "bluetooth": "Bluetooth 5.2 LE",
+    "usbC": "USB Type-C (USB 3.0) — charging, Oculus Link wired PC VR, data transfer",
+    "wirelessPC": "AirLink (Meta) + Virtual Desktop (third-party) via Wi-Fi 6E"
+  },
+
+  "audio": {
+    "speakers": "Integrated open-ear stereo speakers (3D spatial audio)",
+    "microphones": "Integrated microphone array",
+    "headphoneJack": "3.5mm audio jack (for wired headphones)"
+  },
+
+  "sensorsAndTracking": {
+    "trackingDegreesOfFreedom": "6DoF inside-out positional tracking (no external base stations required)",
+    "trackingCameras": "4x wide-angle mono cameras (inside-out room-scale tracking)",
+    "passthroughCameras": "2x high-resolution RGB cameras (color MR passthrough)",
+    "depthSensor": "Depth projector (for spatial mesh, mixed reality occlusion)",
+    "features": [
+      "Bare-hand direct touch tracking (Direct Touch Hand Engine)",
+      "Color passthrough mixed reality",
+      "Mixed reality depth occlusion (objects behind real surfaces)",
+      "Touch Plus controllers (6DoF ring-free motion controllers)"
+    ],
+    "primaryInput": "Touch Plus controllers + bare-hand direct touch tracking + voice"
+  },
+
+  "softwareAndEcosystem": {
+    "os": "Meta Horizon OS",
+    "appStore": "Meta Quest Store + App Lab + SideQuest (sideloading)",
+    "pcVR": "Oculus Link (wired USB-C) / AirLink (Wi-Fi 6E wireless) for SteamVR and Meta PC VR",
+    "features": [
+      "Direct Touch hand engine (no controllers required)",
+      "Color mixed reality passthrough",
+      "Spatial content casting to TV or PC",
+      "Voice commands via Meta AI assistant",
+      "Boundary (Guardian) room-scale safety system"
+    ]
+  },
+
+  "simulationProfile": {
+    "latencyMs": 9.6,
+    "speedFactor": 1.00,
+    "note": "Baseline reference device in the AuraBeat matrix. Snapdragon XR2 Gen 2 performs well for standalone VR but is outpaced by split-compute and newer architectures. Used as 1.0x speed reference.",
+    "xrBenchmarkScore": 88,
+    "fovClass": "fov-quest",
+    "appFovKey": "quest",
+    "ppdWarningRequired": true,
+    "ppdWarningNote": "Display density is ~20.0 PPD (below the 30 PPD clarity threshold). AuraBeat automatically expands UI font size by +14% when this hardware profile is selected to preserve spatial text legibility.",
+    "storageSimPath": "/storage/emulated/0/AuraBeat/Songs/"
+  }
+}

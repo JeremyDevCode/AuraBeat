@@ -1,0 +1,92 @@
+{
+  "deviceName": "VITURE Luma Ultra",
+  "category": "XR Smart Glasses (Birdbath Optical See-Through)",
+  "releaseTarget": "2025",
+  "computeArchitecture": {
+    "type": "Host-Driven Compute (USB-C Tethered — no onboard SoC)",
+    "primarySoC": "Hosted entirely on connected device (Smartphone / PC / MacBook / Steam Deck / ROG Ally)",
+    "eyewearCoprocessor": "Onboard Sensor MCU (manages IMU, camera, wear detection, gesture pipeline locally on glasses)",
+    "audioCoprocessor": "HARMAN AudioEFX DSP (spatial audio tuning built into glasses frame)",
+    "ram": "Hosted by connected device",
+    "storage": "Hosted by connected device",
+    "batteryCapacity": "None — powered directly via USB-C tether from host device",
+    "tdp": "~2.5W – 4.5W (glasses draw power from USB-C host)",
+    "tether": "USB Type-C with magnetic pogo-pin connection (for secure, tool-free cable attach/detach)"
+  },
+
+  "displayAndOptics": {
+    "panelType": "Dual Sony Micro-OLED",
+    "resolutionPerEye": "1920 x 1200 pixels",
+    "aspectRatio": "16:10 (WUXGA per eye)",
+    "combinedResolution": "3840 x 1200 pixels (total)",
+    "peakBrightness": "1500 nits (perceived peak brightness)",
+    "fieldOfView": {
+      "diagonal": "52°",
+      "horizontal": "~45°",
+      "vertical": "~28°"
+    },
+    "refreshRate": "120 Hz",
+    "ppd": 44.6,
+    "opticsType": "Birdbath Optics (folded reflective optical path for a compact form factor)",
+    "dimming": "Electrochromic film adjustable tint (0.5% – 40% light transmission range)",
+    "visionCorrection": "Built-in myopia diopter adjustment (up to -4.0D, no inserts needed)",
+    "ipd": "58 – 70 mm (interpupillary distance range)"
+  },
+
+  "physicalAttributes": {
+    "weight": "83g",
+    "dimensions": "155 × 50.1 × 56.5 mm (folded)",
+    "frameMaterial": "Matte translucent frame"
+  },
+
+  "connectivity": {
+    "hostConnection": "USB Type-C with magnetic pogo-pin (DP Alt Mode or USB display protocol)",
+    "compatibleHosts": [
+      "Android smartphones",
+      "iPhones (via USB-C with adapter)",
+      "MacBook (USB-C)",
+      "Windows PC / Laptop",
+      "Steam Deck",
+      "ROG Ally",
+      "VITURE Pro Neckband (for standalone 6DoF compute)"
+    ],
+    "wireless": "None (wired tether only — no onboard Wi-Fi or Bluetooth)"
+  },
+
+  "audio": {
+    "speakers": "Built-in open-ear spatial sound speakers (frame-mounted)",
+    "tuning": "HARMAN AudioEFX spatial audio processing",
+    "microphones": "Not specified — relies on host device microphone"
+  },
+
+  "sensorsAndTracking": {
+    "frontCamera": "1x front-facing RGB camera",
+    "depthSensors": "2x side grayscale depth sensors",
+    "wearDetection": "Wear detection sensor (auto-on/off when donned or removed)",
+    "trackingDegreesOfFreedom": "6DoF tracking (requires SpaceWalker app or VITURE Pro Neckband for full 6DoF)",
+    "primaryInput": "Bare-hand gesture recognition + 6DoF head motion tracking"
+  },
+
+  "softwareAndEcosystem": {
+    "os": "Host operating system (Android / macOS / Windows / Linux)",
+    "spatialApp": "SpaceWalker (VITURE's spatial window management app for compatible hosts)",
+    "features": [
+      "Real-time 2D-to-3D spatial video conversion",
+      "Multi-window spatial desktop (via SpaceWalker)",
+      "6DoF hand gesture interaction (via SpaceWalker)",
+      "Electrochromic tint control (via companion app)"
+    ]
+  },
+
+  "simulationProfile": {
+    "latencyMs": 12.2,
+    "speedFactor": 1.35,
+    "note": "Slowest benchmark execution due to host-tethered compute model. The glasses have no internal SoC; all XR processing burden falls on the connected host device.",
+    "xrBenchmarkScore": 82,
+    "fovClass": "fov-viture",
+    "appFovKey": "viture",
+    "ppdWarningRequired": false,
+    "storageSimPath": "/storage/emulated/0/AuraBeat/Songs/",
+    "ppdNote": "Highest PPD in the simulated matrix at ~44.6 PPD. Excellent sub-pixel text legibility — no font scaling required."
+  }
+}
