@@ -598,6 +598,14 @@ body.camera-dragging * {
   flex-direction: column;
   overflow: hidden;
   flex: 1;
+  gap: 2px;
+}
+
+.bgm-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
 }
 
 .bgm-title {
@@ -609,9 +617,82 @@ body.camera-dragging * {
   text-overflow: ellipsis;
 }
 
+.bgm-dsp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.60rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.bgm-dsp-badge.analyzing {
+  background: rgba(0, 242, 254, 0.12);
+  color: #00f2fe;
+  border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.bgm-dsp-badge.locked {
+  background: rgba(0, 230, 118, 0.14);
+  color: #00e676;
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  box-shadow: 0 0 8px rgba(0, 230, 118, 0.2);
+}
+
+.bgm-dsp-badge.cached {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.bgm-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
 .bgm-artist {
   font-size: 0.68rem;
   color: var(--accent-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bgm-spectrum-meter {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+  padding: 1px 3px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bgm-spectrum-meter .meter-bar {
+  width: 3px;
+  min-height: 2px;
+  height: 3px;
+  border-radius: 1px;
+  transition: height 0.08s ease-out;
+}
+
+.bgm-spectrum-meter .bar-low {
+  background: #ff0055;
+}
+
+.bgm-spectrum-meter .bar-mid {
+  background: #a855f7;
+}
+
+.bgm-spectrum-meter .bar-high {
+  background: #00f2fe;
 }
 
 .bgm-player-actions {

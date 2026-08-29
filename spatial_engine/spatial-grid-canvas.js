@@ -1,10 +1,10 @@
 /**
- * AuraBeat Spatial 3D Engine - Smooth Vector Spatial Orbs Visualizer
- * Renders crisp, clean vector gradient orbs floating in 3D spatial space,
- * dynamically reactive to track BPM velocity and discrete frequency bands:
- * - Red Orbs: Reactive to Bass with wide, punchy sustain (+24%)
- * - Purple Orbs: Reactive to Mid harmonics (+16%)
- * - Cyan/Blue Orbs: Reactive to rhythm-locked off-beat Treble (+10%)
+ * AuraBeat Spatial 3D Engine - Real-PCM Audio Reactive Vector Orbs Visualizer
+ * Reacts strictly to real acoustic PCM audio samples:
+ * - Silent tracks/drops: 0.000 energy, zero beats, smooth ambient floating.
+ * - Red Orbs: Real bass amplitude (+32% on sustained 808 hold, +20% on staccato kick).
+ * - Purple Orbs: Real mid-range harmonic vocal & synth resonance (+16%).
+ * - Cyan/Blue Orbs: Real high-frequency treble transient shimmer (+10%).
  */
 
 window.AuraBeatSpatial = window.AuraBeatSpatial || {};
@@ -29,14 +29,14 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
       this.type = types[Math.floor(Math.random() * types.length)];
 
       if (this.type === 'bass') {
-        // Red / Rose / Crimson (Deep Bass Kick)
+        // Red / Rose / Crimson (Real Bass & 808 Sustain)
         this.palette = { core: '#ffffff', mid: '#ff0055', stroke: '#ff3366' };
         this.baseRadius += 2.2;
       } else if (this.type === 'mid') {
-        // Purple / Magenta / Violet (Harmonic Mids & Vocals)
+        // Purple / Magenta / Violet (Real Mids & Vocals)
         this.palette = { core: '#ffffff', mid: '#7f00ff', stroke: '#a855f7' };
       } else {
-        // Cyan / Electric Blue (Crisp Treble & Transients)
+        // Cyan / Electric Blue (Real Treble Transients)
         this.palette = { core: '#ffffff', mid: '#00f2fe', stroke: '#4facfe' };
       }
     }
@@ -47,7 +47,7 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
       if (this.z <= 15) { this.reset(); this.z = 1000; }
     }
 
-    draw(ctx, width, height, cameraOffset, audioBass, audioMid, audioTreble) {
+    draw(ctx, width, height, cameraOffset, energy) {
       if (!ctx) return;
       const cx = width / 2 + (cameraOffset ? cameraOffset.offsetX : 0);
       const cy = height / 2 + (cameraOffset ? cameraOffset.offsetY : 0);
@@ -56,17 +56,21 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
       const screenY = ((this.y + floatY) / this.z) * 420 + cy;
       const depthRatio = 1 - (this.z / 1000);
 
+      // Strict Silence Gate: Zero extra energy when audio is silent
       let bandEnergy = 0;
       let scaleMult = 0.10;
-      if (this.type === 'bass') {
-        bandEnergy = audioBass || 0;
-        scaleMult = 0.24; // Deeper, wider pulse on Red
-      } else if (this.type === 'mid') {
-        bandEnergy = audioMid || 0;
-        scaleMult = 0.16; // Harmonic resonance on Purple
-      } else {
-        bandEnergy = audioTreble || 0;
-        scaleMult = 0.10; // Rhythm-locked off-beat micro-shimmer on Cyan
+
+      if (energy && !energy.isSilent) {
+        if (this.type === 'bass') {
+          bandEnergy = energy.bass || 0;
+          scaleMult = energy.isSustained ? 0.32 : 0.20;
+        } else if (this.type === 'mid') {
+          bandEnergy = energy.mid || 0;
+          scaleMult = 0.16;
+        } else {
+          bandEnergy = energy.treble || 0;
+          scaleMult = 0.10;
+        }
       }
 
       const radius = Math.max(2.5, (depthRatio * 16 + this.baseRadius) * (1.0 + bandEnergy * scaleMult));
@@ -84,9 +88,18 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
         ctx.arc(screenX, screenY, radius, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
-        ctx.strokeStyle = this.palette.stroke;
-        ctx.lineWidth = 1.2 + bandEnergy * 0.4;
-        ctx.stroke();
+
+        // Extra outer glow ring on sustained bass notes
+        if (this.type === 'bass' && energy && energy.isSustained && bandEnergy > 0.35) {
+          ctx.strokeStyle = 'rgba(255, 0, 85, 0.65)';
+          ctx.lineWidth = 2.4;
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle = this.palette.stroke;
+          ctx.lineWidth = 1.2 + bandEnergy * 0.4;
+          ctx.stroke();
+        }
+
         ctx.restore();
       }
     }
@@ -125,9 +138,9 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
 
       const energy = (window.AuraBeatHardware && window.AuraBeatHardware.BgmPlayer)
         ? window.AuraBeatHardware.BgmPlayer.getAudioEnergy()
-        : { bass: 0, mid: 0, treble: 0, beatPulse: 1.0, bpmRatio: 1.0 };
+        : { bass: 0, mid: 0, treble: 0, beatPulse: 1.0, bpmRatio: 1.0, isSustained: false, isSilent: true };
 
-      const activePulse = energy.beatPulse || beatPulse || 1.0;
+      const activePulse = energy.isSilent ? 1.0 : (energy.beatPulse || beatPulse || 1.0);
       const bpmRatio = energy.bpmRatio || 1.0;
       const camOffset = { offsetX: -this.yaw * 12.0, offsetY: this.pitch * 10.0 };
 
@@ -137,7 +150,7 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
       }
       this.orbs.forEach(orb => {
         orb.update(activePulse, bpmRatio);
-        orb.draw(ctx, width, height, camOffset, energy.bass, energy.mid, energy.treble);
+        orb.draw(ctx, width, height, camOffset, energy);
       });
     }
   }

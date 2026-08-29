@@ -1,13 +1,15 @@
 /**
  * AuraBeat - Modular Background Music (BGM) Player & Jukebox
- * Dedicated audio engine managing 23 Opus tracks, BPM velocity matrix,
- * sustained bass dynamics, rhythm-locked frequency subdivisions, and transport modes.
- * Default Track: MA:RK - Glow (House.opus | 124 BPM) | Default Volume: 25%
+ * Integrates with Core Real-PCM AudioReactiveEngine for sample-accurate
+ * silence-gated visualizer telemetry, per-track lifecycle resets, and persistent cache.
+ * Default Track: MA:RK - Glow (124 BPM) | Default Volume: 25%
  */
 
 window.AuraBeatHardware = window.AuraBeatHardware || {};
 
 (function () {
+  const STORAGE_KEY = 'aurabeat_bgm_profiles_v1';
+
   const BGM_PLAYLIST = [
     { title: "Glow", artist: "MA：RK", bpm: 124, file: "MA：RK - Glow - House.opus" },
     { title: "I heard you like polyrhythms", artist: "Virtual Riot", bpm: 140, file: "Virtual - Riot - I heard you like polyrhythms.opus" },
@@ -37,12 +39,33 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
   class BgmPlayer {
     constructor() {
       this.playlist = BGM_PLAYLIST;
-      this.currentTrackIndex = 0; // Default: MA:RK - Glow
+      this.currentTrackIndex = 0;
       this.audio = null;
       this.isPlaying = false;
-      this.volume = 0.25; // Default: 25%
+      this.volume = 0.25;
       this.isShuffle = false;
-      this.repeatMode = 'all'; // 'all' | 'one' | 'off'
+      this.repeatMode = 'all';
+
+      this.cachedProfiles = this.loadCachedProfiles();
+      this.analysisProgress = 0;
+      this.isAnalyzed = false;
+      this.activeTrackFile = '';
+    }
+
+    loadCachedProfiles() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    saveProfile(file, data) {
+      this.cachedProfiles[file] = data;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.cachedProfiles));
+      } catch (e) {}
     }
 
     init() {
@@ -50,10 +73,17 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
       this.audio.preload = 'auto';
       this.audio.volume = this.volume;
 
+      if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
+        window.AuraBeatCore.AudioReactiveEngine.init();
+      }
+
       this.loadTrack(this.currentTrackIndex, false);
 
       this.audio.addEventListener('ended', () => this.handleTrackEnded());
       this.audio.addEventListener('play', () => {
+        if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
+          window.AuraBeatCore.AudioReactiveEngine.ensureContext();
+        }
         this.isPlaying = true;
         this.updateUi();
       });
@@ -64,33 +94,27 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
 
       this.bindEvents();
 
-      const unlock = () => {
-        if (!this.isPlaying) this.play();
-      };
+      const unlock = () => { if (!this.isPlaying) this.play(); };
       window.addEventListener('click', unlock, { once: true });
       window.addEventListener('pointerdown', unlock, { once: true });
     }
 
     bindEvents() {
-      const btnPlayPause = document.getElementById('btn-bgm-play-pause');
+      const btnPlay = document.getElementById('btn-bgm-play-pause');
       const btnPrev = document.getElementById('btn-bgm-prev');
       const btnNext = document.getElementById('btn-bgm-next');
-      const btnShuffle = document.getElementById('btn-bgm-shuffle');
-      const btnRepeat = document.getElementById('btn-bgm-repeat');
+      const btnShuf = document.getElementById('btn-bgm-shuffle');
+      const btnRep = document.getElementById('btn-bgm-repeat');
       const btnDice = document.getElementById('btn-bgm-dice');
-      const sliderVol = document.getElementById('slider-bgm-volume');
+      const slider = document.getElementById('slider-bgm-volume');
 
-      if (btnPlayPause) btnPlayPause.addEventListener('click', (e) => { e.stopPropagation(); this.toggleAudio(); });
+      if (btnPlay) btnPlay.addEventListener('click', (e) => { e.stopPropagation(); this.toggleAudio(); });
       if (btnPrev) btnPrev.addEventListener('click', (e) => { e.stopPropagation(); this.prevTrack(); });
       if (btnNext) btnNext.addEventListener('click', (e) => { e.stopPropagation(); this.nextTrack(); });
-      if (btnShuffle) btnShuffle.addEventListener('click', (e) => { e.stopPropagation(); this.toggleShuffle(); });
-      if (btnRepeat) btnRepeat.addEventListener('click', (e) => { e.stopPropagation(); this.cycleRepeatMode(); });
+      if (btnShuf) btnShuf.addEventListener('click', (e) => { e.stopPropagation(); this.toggleShuffle(); });
+      if (btnRep) btnRep.addEventListener('click', (e) => { e.stopPropagation(); this.cycleRepeatMode(); });
       if (btnDice) btnDice.addEventListener('click', (e) => { e.stopPropagation(); this.randomTrack(); });
-      if (sliderVol) {
-        sliderVol.addEventListener('input', (e) => {
-          this.setVolume(parseFloat(e.target.value) / 100);
-        });
-      }
+      if (slider) slider.addEventListener('input', (e) => this.setVolume(parseFloat(e.target.value) / 100));
     }
 
     loadTrack(index, autoPlay = true) {
@@ -99,25 +123,34 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
       this.currentTrackIndex = index;
 
       const track = this.playlist[this.currentTrackIndex];
+      this.activeTrackFile = track.file;
       this.audio.src = `intro/Audio/${track.file}`;
+
+      // Clean per-track lifecycle reset
+      const cached = this.cachedProfiles[track.file];
+      if (cached) {
+        this.isAnalyzed = true;
+        this.analysisProgress = 100;
+      } else {
+        this.isAnalyzed = false;
+        this.analysisProgress = 0;
+      }
+
+      // Notify custom real-PCM reactive engine
+      if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
+        window.AuraBeatCore.AudioReactiveEngine.loadTrack(track.file, track.bpm);
+      }
 
       if (autoPlay) this.play(); else this.updateUi();
     }
 
     play() {
       if (!this.audio) return;
-      this.audio.play().then(() => {
-        this.isPlaying = true;
-        this.updateUi();
-      }).catch(() => {});
+      this.audio.play().then(() => { this.isPlaying = true; this.updateUi(); }).catch(() => {});
     }
 
     pause() {
-      if (this.audio) {
-        this.audio.pause();
-        this.isPlaying = false;
-        this.updateUi();
-      }
+      if (this.audio) { this.audio.pause(); this.isPlaying = false; this.updateUi(); }
     }
 
     toggleAudio() {
@@ -134,32 +167,23 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
     }
 
     randomTrack() {
-      let nextIdx;
-      do {
-        nextIdx = Math.floor(Math.random() * this.playlist.length);
-      } while (nextIdx === this.currentTrackIndex && this.playlist.length > 1);
-      this.loadTrack(nextIdx, true);
+      let idx;
+      do { idx = Math.floor(Math.random() * this.playlist.length); }
+      while (idx === this.currentTrackIndex && this.playlist.length > 1);
+      this.loadTrack(idx, true);
     }
 
-    toggleShuffle() {
-      this.isShuffle = !this.isShuffle;
-      this.updateUi();
-    }
+    toggleShuffle() { this.isShuffle = !this.isShuffle; this.updateUi(); }
 
     cycleRepeatMode() {
-      if (this.repeatMode === 'all') this.repeatMode = 'one';
-      else if (this.repeatMode === 'one') this.repeatMode = 'off';
-      else this.repeatMode = 'all';
+      this.repeatMode = this.repeatMode === 'all' ? 'one' : (this.repeatMode === 'one' ? 'off' : 'all');
       this.updateUi();
     }
 
     handleTrackEnded() {
-      if (this.repeatMode === 'one') {
-        this.audio.currentTime = 0;
-        this.play();
-      } else if (this.repeatMode === 'all') {
-        this.nextTrack();
-      } else if (this.repeatMode === 'off') {
+      if (this.repeatMode === 'one') { this.audio.currentTime = 0; this.play(); }
+      else if (this.repeatMode === 'all') { this.nextTrack(); }
+      else if (this.repeatMode === 'off') {
         if (this.currentTrackIndex < this.playlist.length - 1) this.nextTrack(); else this.pause();
       }
     }
@@ -170,71 +194,89 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
       this.updateUi();
     }
 
-    getCurrentTrack() {
-      return this.playlist[this.currentTrackIndex];
-    }
+    getCurrentTrack() { return this.playlist[this.currentTrackIndex]; }
 
     /**
-     * Real-time audio energy telemetry for 3D visualizers.
-     * Extracts sustained bass, harmonic mids, rhythm-locked off-beat hi-hats,
-     * and track BPM velocity ratio.
+     * Extracts live acoustic energy from Core AudioReactiveEngine.
+     * Silence-gated: returns 0.000 if audio is silent.
      */
     getAudioEnergy() {
       const track = this.getCurrentTrack();
-      const bpm = (track && track.bpm) ? track.bpm : 124.0;
-      const bpmRatio = bpm / 120.0;
+      const trackBpm = (track && track.bpm) ? track.bpm : 124.0;
+      const t = (this.audio && this.audio.currentTime) ? this.audio.currentTime : 0;
 
-      if (!this.isPlaying || !this.audio || this.audio.paused || this.volume <= 0.001) {
-        return { bass: 0.0, mid: 0.0, treble: 0.0, beatPulse: 1.0, bpmRatio: 0.7 };
+      let energy = { bass: 0, mid: 0, treble: 0, beatPulse: 1.0, bpm: trackBpm, isSustained: false, rms: 0, isSilent: true };
+
+      if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
+        energy = window.AuraBeatCore.AudioReactiveEngine.getAcousticEnergy(t, this.isPlaying, this.volume);
       }
 
-      const t = this.audio.currentTime || 0;
-      const beatProgress = (t * (bpm / 60.0)) % 1.0;
-      const midProgress = (t * (bpm / 60.0) + 0.5) % 1.0;
-      const hatProgress = (t * (bpm / 30.0)) % 1.0; // Synchronized 8th-note off-beats
+      const activeBpm = energy.bpm || trackBpm;
+      const bpmRatio = activeBpm / 120.0;
 
-      // 1. Red Bass: Wide, deep sustain with acoustic tail (slower decay 2.4)
-      const kickPulse = Math.exp(-beatProgress * 2.4);
-      // 2. Purple Mid: Smooth harmonic backbeat decay (3.2)
-      const snarePulse = Math.exp(-midProgress * 3.2);
-      // 3. Cyan Treble: Crisp rhythm-locked off-beat transient (6.0)
-      const hatPulse = Math.exp(-hatProgress * 6.0);
+      // Live BPM Analysis Badge Progress Update
+      if (!this.isAnalyzed && this.isPlaying && !energy.isSilent) {
+        this.analysisProgress = Math.min(100, Math.floor((t / 2.5) * 100));
+        if (this.analysisProgress >= 100) {
+          this.isAnalyzed = true;
+          this.saveProfile(track.file, { bpm: activeBpm, locked: true });
+          this.updateUi();
+        } else {
+          this.updateDspBadgeText();
+        }
+      }
 
-      const volMult = Math.min(1.0, this.volume * 2.5);
-      const bass = (kickPulse * 0.90 + 0.10) * volMult;
-      const mid = (snarePulse * 0.75 + 0.10) * volMult;
-      const treble = (hatPulse * 0.65 + 0.08) * volMult;
-      const beatPulse = 1.0 + (kickPulse * 0.16) * volMult;
+      this.updateSpectrumMeter(energy.bass, energy.mid, energy.treble);
+      return { ...energy, bpmRatio };
+    }
 
-      return { bass, mid, treble, beatPulse, bpmRatio };
+    updateSpectrumMeter(bass, mid, treble) {
+      const elLow = document.getElementById('meter-low');
+      const elMid = document.getElementById('meter-mid');
+      const elHigh = document.getElementById('meter-high');
+      if (elLow) elLow.style.height = `${Math.max(2, Math.min(10, bass * 10))}px`;
+      if (elMid) elMid.style.height = `${Math.max(2, Math.min(10, mid * 10))}px`;
+      if (elHigh) elHigh.style.height = `${Math.max(2, Math.min(10, treble * 10))}px`;
+    }
+
+    updateDspBadgeText() {
+      const textEl = document.getElementById('bgm-dsp-badge-text');
+      if (textEl && !this.isAnalyzed) textEl.textContent = `Analyzing ${this.analysisProgress}%`;
     }
 
     updateUi() {
       const track = this.getCurrentTrack();
       const titleEl = document.getElementById('bgm-track-title');
       const artistEl = document.getElementById('bgm-track-artist');
-      const playPauseBtn = document.getElementById('btn-bgm-play-pause');
-      const volumeVal = document.getElementById('bgm-volume-val');
-      const btnShuffle = document.getElementById('btn-bgm-shuffle');
-      const btnRepeat = document.getElementById('btn-bgm-repeat');
+      const playBtn = document.getElementById('btn-bgm-play-pause');
+      const volVal = document.getElementById('bgm-volume-val');
+      const btnShuf = document.getElementById('btn-bgm-shuffle');
+      const btnRep = document.getElementById('btn-bgm-repeat');
+      const badgeEl = document.getElementById('bgm-dsp-badge');
 
       if (titleEl) titleEl.textContent = track ? track.title : 'BGM Track';
-      if (artistEl) artistEl.textContent = track ? `${track.artist} (${track.bpm} BPM)` : 'AuraBeat';
-      if (playPauseBtn) playPauseBtn.innerHTML = this.isPlaying ? '<i class="ri-pause-fill"></i>' : '<i class="ri-play-fill"></i>';
-      if (volumeVal) volumeVal.textContent = `${Math.round(this.volume * 100)}%`;
+      if (artistEl) artistEl.textContent = track ? track.artist : 'AuraBeat';
+      if (playBtn) playBtn.innerHTML = this.isPlaying ? '<i class="ri-pause-fill"></i>' : '<i class="ri-play-fill"></i>';
+      if (volVal) volVal.textContent = `${Math.round(this.volume * 100)}%`;
 
-      if (btnShuffle) btnShuffle.classList.toggle('active', this.isShuffle);
-      if (btnRepeat) {
-        btnRepeat.className = `bgm-ctrl-btn bgm-repeat-btn ${this.repeatMode !== 'off' ? 'active-' + this.repeatMode : ''}`;
-        if (this.repeatMode === 'one') {
-          btnRepeat.innerHTML = '<i class="ri-repeat-one-line"></i>';
-          btnRepeat.title = 'Repeat: One Track';
-        } else if (this.repeatMode === 'all') {
-          btnRepeat.innerHTML = '<i class="ri-repeat-line"></i>';
-          btnRepeat.title = 'Repeat: All Tracks';
+      if (btnShuf) btnShuf.classList.toggle('active', this.isShuffle);
+      if (btnRep) {
+        btnRep.className = `bgm-ctrl-btn bgm-repeat-btn ${this.repeatMode !== 'off' ? 'active-' + this.repeatMode : ''}`;
+        btnRep.innerHTML = this.repeatMode === 'one' ? '<i class="ri-repeat-one-line"></i>' : '<i class="ri-repeat-line"></i>';
+      }
+
+      if (badgeEl && track) {
+        const cached = this.cachedProfiles[track.file];
+        const displayBpm = (cached && cached.bpm) ? cached.bpm : track.bpm;
+        if (cached) {
+          badgeEl.className = 'bgm-dsp-badge cached';
+          badgeEl.innerHTML = `<i class="ri-save-3-line"></i><span>${displayBpm} BPM (Saved)</span>`;
+        } else if (this.isAnalyzed) {
+          badgeEl.className = 'bgm-dsp-badge locked';
+          badgeEl.innerHTML = `<i class="ri-checkbox-circle-fill"></i><span>${displayBpm} BPM (Locked)</span>`;
         } else {
-          btnRepeat.innerHTML = '<i class="ri-repeat-line"></i>';
-          btnRepeat.title = 'Repeat: OFF';
+          badgeEl.className = 'bgm-dsp-badge analyzing';
+          badgeEl.innerHTML = `<i class="ri-loader-4-line spin"></i><span id="bgm-dsp-badge-text">Analyzing ${this.analysisProgress}%</span>`;
         }
       }
     }

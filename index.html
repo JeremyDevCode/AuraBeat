@@ -100,8 +100,21 @@
             <div class="bgm-track-meta">
               <div class="bgm-disc-spin"><i class="ri-music-2-fill text-accent"></i></div>
               <div class="bgm-text-column">
-                <span id="bgm-track-title" class="bgm-title">Glow</span>
-                <span id="bgm-track-artist" class="bgm-artist">MA：RK</span>
+                <div class="bgm-title-row">
+                  <span id="bgm-track-title" class="bgm-title">Glow</span>
+                  <span id="bgm-dsp-badge" class="bgm-dsp-badge analyzing" title="DSP Acoustic Analysis & BPM Telemetry">
+                    <i class="ri-loader-4-line spin"></i>
+                    <span id="bgm-dsp-badge-text">Analyzing 0%</span>
+                  </span>
+                </div>
+                <div class="bgm-sub-row">
+                  <span id="bgm-track-artist" class="bgm-artist">MA：RK</span>
+                  <div id="bgm-spectrum-meter" class="bgm-spectrum-meter" title="Real-Time Acoustic Bands (LOW | MID | HIGH)">
+                    <span class="meter-bar bar-low" id="meter-low"></span>
+                    <span class="meter-bar bar-mid" id="meter-mid"></span>
+                    <span class="meter-bar bar-high" id="meter-high"></span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="bgm-player-actions">
@@ -311,6 +324,15 @@
 
   </div>
 
+  <!-- Core Mathematical, Audio DSP & Optics Subsystems -->
+  <script src="core_engine/spline-interpolator.js"></script>
+  <script src="core_engine/audio-dsp-vbe.js"></script>
+  <script src="core_engine/audio-reactive-engine.js"></script>
+  <script src="core_engine/optical-dimming-filter.js"></script>
+  <script src="core_engine/ost-color-blender.js"></script>
+  <script src="core_engine/auramap-parser.js"></script>
+  <script src="core_engine/telemetry-recorder.js"></script>
+
   <!-- Target Hardware Specifications & Simulation Profiles -->
   <script src="hardware_simulation/hardware-registry.js"></script>
   <script src="hardware_simulation/bgm-player.js"></script>
@@ -331,15 +353,7 @@
   <script src="spatial_engine/spatial-grid-canvas.js"></script>
   <script src="spatial_engine/spatial-manager.js"></script>
 
-  <!-- Core Mathematical, Audio DSP & Optics Subsystems -->
-  <script src="core_engine/spline-interpolator.js"></script>
-  <script src="core_engine/audio-dsp-vbe.js"></script>
-  <script src="core_engine/optical-dimming-filter.js"></script>
-  <script src="core_engine/ost-color-blender.js"></script>
-  <script src="core_engine/auramap-parser.js"></script>
-  <script src="core_engine/telemetry-recorder.js"></script>
-
-  <!-- Native HTML5 Direct Audio Pipeline (Lossless FLAC & MP3) -->
+  <!-- Native HTML5 Direct Audio Pipeline (High-Fidelity Opus & Lossless) -->
   <audio id="bgm-audio-node" preload="auto"></audio>
 
   <script src="app.js"></script>

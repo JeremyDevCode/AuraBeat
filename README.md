@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-cyan.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-AR%20Glasses%20%7C%20VR%20%26%20XR%20Headsets-00f2fe.svg)](#-target-hardware-simulation-matrix)
+[![Hackathon](https://img.shields.io/badge/CLAD%20Summer%20Hackathon-Ambient%20Suite%20Track-ff007f.svg)](#-the-clad-summer-hackathon-developer-roadmap--ambient-suite-ecosystem)
 [![Audio](https://img.shields.io/badge/Audio-23%20Opus%20Tracks%20(193kbps)-a855f7.svg)](#-features--architecture-highlights)
 [![Modularity](https://img.shields.io/badge/Modularity-%3C%20300%20LOC%20Per%20File%20(100%25%20Green)-00e676.svg)](#-project-structure)
 [![Zero-Build](https://img.shields.io/badge/Build-Pure%20Vanilla%20Web%20(Zero--Build)-blue.svg)](#-running-locally)
@@ -15,6 +16,68 @@
 ---
 
 **AuraBeat** combines spatial rhythm game mechanics with an optics & hardware telemetry simulator. Designed with Xiaomi HyperOS 2.0 superellipse geometry, asymmetric bento HUD layouts, and tactile motion physics, **AuraBeat** prepares rhythm engine execution for next-generation spatial optics.
+
+---
+
+## 🌟 The CLAD Summer Hackathon, Developer Roadmap & Ambient Suite Ecosystem
+
+> [!NOTE]
+> **Current Status & Temporary AuraBeat Sprint Pause (Sept 2026):**
+> With university **Exam Week commencing September 1st**, academic preparation takes top priority. To balance study commitments with ambitious software innovation, active development on AuraBeat's rhythm gameplay is temporarily **postponed** to allocate focused energy toward **The CLAD Summer Hackathon** to engineer a rough prototype of the **Ambient Suite**.
+
+---
+
+### 🎯 The Challenge: Balancing Exams, Hackathon Innovation & Personal Accountability
+As a solo independent developer at **AuraLabs Studio**, balancing rigorous academic exams with competitive engineering requires ruthless discipline. Studies take the highest precedence—and every remaining hour of focus is dedicated to bringing the **Ambient Suite** to life during The CLAD Summer Hackathon.
+
+> [!TIP]
+> **A Transparent Note from the Developer:**
+> While winning the hackathon is far from guaranteed—especially under tight exam constraints—participating is an invaluable personal milestone. I have often struggled with severe procrastination and keeping up with development timelines. Taking on this challenge serves as a vital **accountability forcing function** to build discipline, push through executive dysfunction, and turn abstract spatial ideas into tangible working code.
+
+---
+
+### 🌌 The Vision: The Ambient Suite Ecosystem
+The **Ambient Suite** is an offline-first, privacy-respecting spatial computing & personal telemetry ecosystem designed for lightweight smart glasses and mobile companion hosts:
+
+```
+                      ┌─────────────────────────────────┐
+                      │          AMBIENT TRACK          │
+                      │  (Central Hub, Task Tree,       │
+                      │   Grant Ledger, Pearson Engine) │
+                      └───────────────┬─────────────────┘
+                                      │ (On-Demand Content Providers)
+         ┌────────────────────────────┼────────────────────────────┐
+         ▼                            ▼                            ▼
+┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
+│  DAILY AMBIENT   │        │  SPORT AMBIENT   │        │   LENS AMBIENT   │
+│  Biometrics, SQI,│        │  HR Zones, VO2,  │        │  Gemini Vision,  │
+│  IoT (BLE/UDP)   │        │  Low-Latency BLE │        │  Homography, ESWF│
+└──────────────────┘        └──────────────────┘        └──────────────────┘
+```
+
+1. **Daily Ambient (Biometric & IoT Sentinel):**
+   - Direct BLE GATT ingestion (Xiaomi S400 Scale, Smartwatch) and local encrypted UDP bypass for smart appliances.
+   - Deterministic mathematical models: Body Mass Index (BMI), Mifflin-St Jeor Basal Metabolic Rate (BMR), and weighted Sleep Quality Index (SQI).
+2. **Ambient Track (Central Hub & Correlation Engine):**
+   - Hierarchical non-linear Task Tree with Recursive Completion Factor (TTCF) mathematics.
+   - Cross-Domain Pearson Correlation ($r_{xy}$) linking physiological variables (sleep, glycemic index) to daily cognitive task velocity.
+   - Local-first SQLite Write-Ahead Logging (WAL) and audit-grade grant expenditure ledger.
+3. **Sport Ambient (Spatial Athletic HUD):**
+   - Real-time athletic stress telemetry using Tanaka Max HR, Karvonen Target Heart Rate zones, and rolling Uth-Sørensen $VO_2\text{ Max}$ estimation.
+   - Glanceable, color-vignetted peripheral HUD casting to smart glasses with sub-5ms latency.
+4. **Lens Ambient (Multimodal Spatial Vision):**
+   - Passive context capture via smart glasses camera using Gemini Multimodal API structured JSON parsing.
+   - Planar Homography Matrix ($H$) for distortion-free head-tracking HUD alignment and Energy Slump Warning Factor (ESWF) metabolic alerts.
+
+---
+
+### 👓 The Hardware Mission: Funding the XREAL One Pro
+A critical challenge in developing spatial computing software like **AuraBeat** and the **Ambient Suite** is being **restricted to standard 2D flat displays**. Simulating 3DoF/6DoF optics, monocular HUD viewports, and peripheral vision cues on flat screens requires extensive emulation layers.
+
+Competing in **The CLAD Summer Hackathon** is aimed at unlocking the resources needed to acquire true wearable AR hardware—specifically the **XREAL One Pro**:
+1. **Accelerate AuraBeat & Ambient Suite Development:** Transitioning directly from 2D widescreen simulation to native DisplayPort Alt-Mode casting, NRSDK spatial anchors, and real Micro-OLED birdbath optics.
+2. **Conquer Procrastination & Supercharge Daily Productivity:** Creating a floating, distraction-free spatial workspace to organize daily study schedules, task trees, and engineering sprints without physical monitor limits.
+3. **True Spatial Progressive HUD Validation:** Validating Easy Mode (Peripheral Guardian), Advanced Mode (Metrics Grid), and Expert Mode (Diagnostic Engine) in real-world ambient lighting.
 
 ---
 
@@ -48,12 +111,13 @@ AuraBeat includes calibrated hardware specifications, optical FOV apertures, and
   - **Randomize Dice (`🎲`):** Instantly rolls and plays a random song from the library.
 - **Unmuted Native Audio Routing:** Direct HTML5 DOM speaker output with zero cross-origin muting on local `file:///` and live web servers. Default starting track: **`MA:RK — Glow`** at **25% volume**.
 
-### 🔴🟣🔵 Frequency-Reactive 3D Vector Orbs
-- Floating vector gradient orbs with distinct, frequency-mapped physical responses:
-  - 🔴 **Red Orbs (`BASS`):** Reactive to sub-bass & kick drops with wide, punchy **$+24\%$** expansion and sustained acoustic decay.
-  - 🟣 **Purple Orbs (`MID`):** Reactive to vocals, chords, and backbeat snares with **$+16\%$** harmonic pulse.
-  - 🔵 **Cyan Orbs (`TREBLE`):** Reactive to rhythm-locked **8th-note off-beat hi-hats** with **$+10\%$** crisp micro-shimmers.
-- **Track-Specific BPM Velocity Scaling:** Background ball drift speed scales proportionally with active song tempo (from **85 BPM** slow jazz up to **145 BPM** fast metal).
+### 🔴🟣🔵 Custom Real-PCM Frequency-Reactive 3D Vector Orbs
+- Floating vector gradient orbs with sample-accurate, acoustic PCM frequency responses:
+  - 🔴 **Red Orbs (`BASS`):** Reactive to real sub-bass & 808 glides with **$+32\%$** sustained radiance and **$+20\%$** staccato kicks.
+  - 🟣 **Purple Orbs (`MID`):** Reactive to vocals, chords, and synth harmonics with **$+16\%$** smooth pulse.
+  - 🔵 **Cyan Orbs (`TREBLE`):** Reactive to real high-frequency transients and hi-hats with **$+10\%$** crisp micro-shimmers.
+- **Strict Silence Gate:** Produces **`0.000` energy (zero false beats)** during silence or quiet drops.
+- **Live BPM Analysis & Saved Data Badge:** Real-time tempo lock (`[ ⚡ 124 BPM (Locked) ]`) with persistent `localStorage` profile caching and a mini 3-band spectrum meter.
 
 ### 🚀 Modular Intro & Diagnostic Benchmark Pipeline
 - **Stage 0: Pre-Loader (`stage-loader.js`)**: Subsystem verification scanner.
@@ -75,6 +139,7 @@ AuraBeat/
 ├── styles.css                   # HyperOS 2.0 Design Tokens, FOV Bounds & Glassmorphism
 ├── core_engine/                 # Mathematical, Audio DSP & Optics Subsystems
 │   ├── audio-dsp-vbe.js         # Virtual Bass Extension (VBE) DSP Filter
+│   ├── audio-reactive-engine.js # Real-PCM Wave Slicing & Silence-Gated Analyzer
 │   ├── auramap-parser.js        # .auramap 3D Spatial Beatmap Parser
 │   ├── optical-dimming-filter.js# Optical Dimming & Contrast Transmission
 │   ├── ost-color-blender.js     # Harmonic OST Color Theme Engine
