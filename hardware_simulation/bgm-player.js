@@ -1,7 +1,7 @@
 /**
  * AuraBeat - Modular Background Music (BGM) Player & Jukebox
- * Integrates with Core Real-PCM AudioReactiveEngine for sample-accurate
- * silence-gated visualizer telemetry, per-track lifecycle resets, and persistent cache.
+ * Direct unmuted speaker routing with volume-scaled frequency telemetry,
+ * per-track lifecycle resets, and persistent localStorage profile caching.
  * Default Track: MA:RK - Glow (124 BPM) | Default Volume: 25%
  */
 
@@ -12,7 +12,6 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
 
   const BGM_PLAYLIST = [
     { title: "Glow", artist: "MA：RK", bpm: 124, file: "MA：RK - Glow - House.opus" },
-    { title: "I heard you like polyrhythms", artist: "Virtual Riot", bpm: 140, file: "Virtual - Riot - I heard you like polyrhythms.opus" },
     { title: "Senja", artist: "gabriawll", bpm: 118, file: "gabriawll - Senja - Electric.opus" },
     { title: "Shelter", artist: "Porter Robinson", bpm: 100, file: "Porter Robinson - Shelter - Electronic.opus" },
     { title: "Nevada", artist: "Vicetone", bpm: 128, file: "Vicetone - Nevada - Dance.opus" },
@@ -73,17 +72,10 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
       this.audio.preload = 'auto';
       this.audio.volume = this.volume;
 
-      if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
-        window.AuraBeatCore.AudioReactiveEngine.init();
-      }
-
       this.loadTrack(this.currentTrackIndex, false);
 
       this.audio.addEventListener('ended', () => this.handleTrackEnded());
       this.audio.addEventListener('play', () => {
-        if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
-          window.AuraBeatCore.AudioReactiveEngine.ensureContext();
-        }
         this.isPlaying = true;
         this.updateUi();
       });
@@ -94,7 +86,9 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
 
       this.bindEvents();
 
-      const unlock = () => { if (!this.isPlaying) this.play(); };
+      const unlock = () => {
+        if (!this.isPlaying) this.play();
+      };
       window.addEventListener('click', unlock, { once: true });
       window.addEventListener('pointerdown', unlock, { once: true });
     }
@@ -126,7 +120,7 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
       this.activeTrackFile = track.file;
       this.audio.src = `intro/Audio/${track.file}`;
 
-      // Clean per-track lifecycle reset
+      // Per-track lifecycle reset
       const cached = this.cachedProfiles[track.file];
       if (cached) {
         this.isAnalyzed = true;
@@ -136,7 +130,6 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
         this.analysisProgress = 0;
       }
 
-      // Notify custom real-PCM reactive engine
       if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
         window.AuraBeatCore.AudioReactiveEngine.loadTrack(track.file, track.bpm);
       }
@@ -197,26 +190,47 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
     getCurrentTrack() { return this.playlist[this.currentTrackIndex]; }
 
     /**
-     * Extracts live acoustic energy from Core AudioReactiveEngine.
-     * Silence-gated: returns 0.000 if audio is silent.
+     * Slices volume-scaled acoustic energy from Core AudioReactiveEngine.
      */
     getAudioEnergy() {
       const track = this.getCurrentTrack();
       const trackBpm = (track && track.bpm) ? track.bpm : 124.0;
       const t = (this.audio && this.audio.currentTime) ? this.audio.currentTime : 0;
+      if (!this._energyOutput) {
+        this._energyOutput = { bass: 0, mid: 0, treble: 0, subbass: 0, lowMid: 0, highMid: 0, air: 0, spectrum: [], beatPulse: 1.0, bpm: trackBpm, isSustained: false, rms: 0, isSilent: true, bpmRatio: 1.0 };
+      }
+      const out = this._energyOutput;
 
-      let energy = { bass: 0, mid: 0, treble: 0, beatPulse: 1.0, bpm: trackBpm, isSustained: false, rms: 0, isSilent: true };
-
+      let energy = null;
       if (window.AuraBeatCore && window.AuraBeatCore.AudioReactiveEngine) {
         energy = window.AuraBeatCore.AudioReactiveEngine.getAcousticEnergy(t, this.isPlaying, this.volume);
       }
 
-      const activeBpm = energy.bpm || trackBpm;
-      const bpmRatio = activeBpm / 120.0;
+      if (energy) {
+        out.bass = energy.bass;
+        out.mid = energy.mid;
+        out.treble = energy.treble;
+        out.subbass = energy.subbass || energy.bass;
+        out.lowMid = energy.lowMid || energy.mid;
+        out.highMid = energy.highMid || energy.treble;
+        out.air = energy.air || energy.treble;
+        out.spectrum = energy.spectrum || [out.bass, out.mid, out.treble];
+        out.beatPulse = energy.beatPulse;
+        out.bpm = energy.bpm;
+        out.isSustained = energy.isSustained;
+        out.rms = energy.rms;
+        out.isSilent = energy.isSilent;
+      } else {
+        out.bass = 0; out.mid = 0; out.treble = 0; out.subbass = 0; out.lowMid = 0; out.highMid = 0; out.air = 0;
+        out.spectrum = []; out.beatPulse = 1.0; out.bpm = trackBpm; out.isSustained = false; out.rms = 0; out.isSilent = true;
+      }
 
-      // Live BPM Analysis Badge Progress Update
-      if (!this.isAnalyzed && this.isPlaying && !energy.isSilent) {
-        this.analysisProgress = Math.min(100, Math.floor((t / 2.5) * 100));
+      const activeBpm = out.bpm || trackBpm;
+      out.bpmRatio = activeBpm / 120.0;
+
+      // Update Live BPM Analysis Badge Progress
+      if (!this.isAnalyzed && this.isPlaying && !out.isSilent) {
+        this.analysisProgress = Math.min(100, Math.floor((t / 2.2) * 100));
         if (this.analysisProgress >= 100) {
           this.isAnalyzed = true;
           this.saveProfile(track.file, { bpm: activeBpm, locked: true });
@@ -226,17 +240,35 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
         }
       }
 
-      this.updateSpectrumMeter(energy.bass, energy.mid, energy.treble);
-      return { ...energy, bpmRatio };
+      this.updateSpectrumMeter(out.bass, out.mid, out.treble);
+      return out;
     }
 
     updateSpectrumMeter(bass, mid, treble) {
-      const elLow = document.getElementById('meter-low');
-      const elMid = document.getElementById('meter-mid');
-      const elHigh = document.getElementById('meter-high');
-      if (elLow) elLow.style.height = `${Math.max(2, Math.min(10, bass * 10))}px`;
-      if (elMid) elMid.style.height = `${Math.max(2, Math.min(10, mid * 10))}px`;
-      if (elHigh) elHigh.style.height = `${Math.max(2, Math.min(10, treble * 10))}px`;
+      if (!this._meterEls) {
+        this._meterEls = [
+          document.getElementById('meter-low'),
+          document.getElementById('meter-mid'),
+          document.getElementById('meter-high')
+        ];
+        this._lastHeights = [-1, -1, -1];
+      }
+      const h0 = Math.round(Math.max(2, Math.min(10, bass * 10)));
+      const h1 = Math.round(Math.max(2, Math.min(10, mid * 10)));
+      const h2 = Math.round(Math.max(2, Math.min(10, treble * 10)));
+
+      if (h0 !== this._lastHeights[0] && this._meterEls[0]) {
+        this._lastHeights[0] = h0;
+        this._meterEls[0].style.height = `${h0}px`;
+      }
+      if (h1 !== this._lastHeights[1] && this._meterEls[1]) {
+        this._lastHeights[1] = h1;
+        this._meterEls[1].style.height = `${h1}px`;
+      }
+      if (h2 !== this._lastHeights[2] && this._meterEls[2]) {
+        this._lastHeights[2] = h2;
+        this._meterEls[2].style.height = `${h2}px`;
+      }
     }
 
     updateDspBadgeText() {

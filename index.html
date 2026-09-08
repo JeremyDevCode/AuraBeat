@@ -125,11 +125,325 @@
                 <button id="btn-bgm-next" class="bgm-ctrl-btn" title="Next Track"><i class="ri-skip-forward-fill"></i></button>
                 <button id="btn-bgm-repeat" class="bgm-ctrl-btn bgm-repeat-btn active-all" title="Repeat: All Tracks"><i class="ri-repeat-line"></i></button>
                 <button id="btn-bgm-dice" class="bgm-ctrl-btn bgm-dice-btn" title="Roll Random Track"><i class="ri-dice-line"></i></button>
+                <button id="btn-bgm-dev-settings" class="bgm-ctrl-btn bgm-dev-btn" title="Visualizer Developer Settings"><i class="ri-equalizer-3-line"></i></button>
               </div>
               <div class="bgm-volume-row">
                 <i class="ri-volume-down-line text-muted"></i>
                 <input type="range" id="slider-bgm-volume" min="0" max="100" value="25" class="bgm-volume-slider" title="Volume">
                 <span id="bgm-volume-val" class="bgm-vol-text">25%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dock Placeholder for Detached Window -->
+          <div id="dev-dock-placeholder" class="dev-dock-placeholder hidden" title="Click to Dock Visualizer Studio">
+            <i class="ri-drag-drop-line text-accent"></i>
+            <span>Dock Visualizer Studio Back Here</span>
+          </div>
+
+          <!-- Developer Settings Panel (Collapsible / Detachable Studio) -->
+          <div id="bgm-dev-panel" class="bgm-dev-panel hidden">
+            <!-- Draggable Titlebar -->
+            <div class="dev-panel-header" id="dev-panel-titlebar">
+              <div class="dev-panel-title">
+                <i class="ri-drag-move-fill dev-drag-icon text-muted" title="Drag to Move Window"></i>
+                <i class="ri-equalizer-3-line text-accent"></i>
+                <span>Visualizer Studio</span>
+              </div>
+              <div class="dev-header-actions">
+                <button id="btn-dev-detach" class="dev-action-icon-btn" title="Detach / Float as Independent Window"><i class="ri-picture-in-picture-2-line"></i></button>
+                <button id="btn-dev-close" class="dev-action-icon-btn" title="Close Studio"><i class="ri-close-line"></i></button>
+              </div>
+            </div>
+
+            <!-- Profile Management Strip -->
+            <div class="dev-profile-bar">
+              <div class="dev-profile-select-wrap">
+                <span class="dev-profile-label"><i class="ri-sound-module-fill text-accent"></i> Profile:</span>
+                <select id="select-dev-profile" class="dev-profile-select" title="Active Visualizer Profile"></select>
+              </div>
+              <div class="dev-profile-actions">
+                <button id="btn-profile-new" class="dev-profile-btn" title="Create New Profile from Current Settings"><i class="ri-add-line"></i> New</button>
+                <button id="btn-profile-save" class="dev-profile-btn" title="Save Changes to Profile"><i class="ri-save-3-line"></i> Save</button>
+                <button id="btn-profile-del" class="dev-profile-btn dev-del-btn" title="Delete Profile"><i class="ri-delete-bin-line"></i></button>
+                <button id="btn-dev-reset" class="dev-reset-btn" title="Reset to Defaults"><i class="ri-refresh-line"></i></button>
+              </div>
+            </div>
+
+            <!-- Inline New Profile Creation Row -->
+            <div id="dev-profile-new-row" class="dev-profile-new-row hidden">
+              <input type="text" id="input-profile-name" class="dev-profile-input" placeholder="Profile name..." maxlength="24">
+              <button id="btn-profile-confirm" class="dev-profile-btn confirm-btn"><i class="ri-check-line"></i> Create</button>
+              <button id="btn-profile-cancel" class="dev-profile-btn cancel-btn"><i class="ri-close-line"></i></button>
+            </div>
+
+            <div class="dev-studio-two-col">
+              <!-- LEFT COLUMN: HARMONIC LINES SETTINGS -->
+              <div class="dev-col dev-col-lines">
+                <div class="dev-col-header">
+                  <div class="dev-col-badge text-cyan">
+                    <i class="ri-pulse-line"></i>
+                    <span>Lines Settings</span>
+                  </div>
+                  <span class="dev-col-sub">Spatial Strings</span>
+                </div>
+                <div class="dev-col-controls">
+                  <!-- Line Amplitude -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Line Amplitude</span>
+                      <span id="val-line-amp" class="dev-val">1.0x</span>
+                    </div>
+                    <input type="range" id="slider-line-amp" min="0.1" max="3.0" step="0.1" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Line Energy Smoothing -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Line Smoothing</span>
+                      <span id="val-line-smoothing" class="dev-val">0.40</span>
+                    </div>
+                    <input type="range" id="slider-line-smoothing" min="0.05" max="0.95" step="0.05" value="0.40" class="dev-slider">
+                  </div>
+
+                  <!-- Number of Bars -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Number of Bars</span>
+                      <span id="val-line-count" class="dev-val">10</span>
+                    </div>
+                    <input type="range" id="slider-line-count" min="2" max="32" step="1" value="10" class="dev-slider">
+                  </div>
+
+                  <!-- Sensitivity -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Sensitivity</span>
+                      <span id="val-line-sens" class="dev-val">1.0x</span>
+                    </div>
+                    <input type="range" id="slider-line-sens" min="0.1" max="3.0" step="0.1" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Detail (Curve Nodes) -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Detail (Nodes)</span>
+                      <span id="val-line-detail" class="dev-val">8 nodes</span>
+                    </div>
+                    <input type="range" id="slider-line-detail" min="4" max="20" step="1" value="8" class="dev-slider">
+                  </div>
+
+                  <!-- Thickness & Bar Width -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Thickness / Width</span>
+                      <span id="val-line-thickness" class="dev-val">2.4px</span>
+                    </div>
+                    <input type="range" id="slider-line-thickness" min="0.5" max="8.0" step="0.1" value="2.4" class="dev-slider">
+                  </div>
+
+                  <!-- Glow Bloom -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Glow Bloom</span>
+                      <span id="val-line-glow" class="dev-val">12px</span>
+                    </div>
+                    <input type="range" id="slider-line-glow" min="0" max="30" step="1" value="12" class="dev-slider">
+                  </div>
+
+                  <!-- Wave Ripple Speed -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Wave Speed</span>
+                      <span id="val-line-wavespeed" class="dev-val">1.0x</span>
+                    </div>
+                    <input type="range" id="slider-line-wavespeed" min="0.2" max="3.0" step="0.1" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Line Length (Span) -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Line Length (Span)</span>
+                      <span id="val-line-length" class="dev-val">100%</span>
+                    </div>
+                    <input type="range" id="slider-line-length" min="0.3" max="2.2" step="0.05" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Corridor Gap -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Corridor Gap</span>
+                      <span id="val-line-gap" class="dev-val">500px</span>
+                    </div>
+                    <input type="range" id="slider-line-gap" min="100" max="1200" step="20" value="500" class="dev-slider">
+                  </div>
+
+                  <!-- Beat Pulse Kick -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Beat Pulse Kick</span>
+                      <span id="val-line-pulse" class="dev-val">1.0x</span>
+                    </div>
+                    <input type="range" id="slider-line-pulse" min="0.0" max="3.0" step="0.1" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Color Theme -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Color Theme</span>
+                      <span id="val-line-theme" class="dev-val">Neon</span>
+                    </div>
+                    <select id="select-line-theme" class="dev-select">
+                      <option value="neon">Cyber Neon</option>
+                      <option value="cyan">Electric Cyan</option>
+                      <option value="crimson">Crimson Red</option>
+                      <option value="amber">Golden Amber</option>
+                      <option value="emerald">Emerald Matrix</option>
+                      <option value="monochrome">Ghost White</option>
+                    </select>
+                  </div>
+
+                  <!-- Audio Band Filter -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Audio Band Filter</span>
+                      <span id="val-line-band" class="dev-val">All</span>
+                    </div>
+                    <select id="select-line-band" class="dev-select">
+                      <option value="all">All-Pass Balanced</option>
+                      <option value="subbass">Sub-Bass Drive</option>
+                      <option value="bass">Bass Punch</option>
+                      <option value="mids">Mid Vocals</option>
+                      <option value="treble">Treble Shimmer</option>
+                    </select>
+                  </div>
+
+                  <!-- Cyan Line Tilt -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Cyan Tilt (Bass ↔ Treble)</span>
+                      <span id="val-bias-cyan" class="dev-val">Treble Tilt</span>
+                    </div>
+                    <input type="range" id="slider-bias-cyan" min="0.0" max="1.0" step="0.05" value="0.65" class="dev-slider">
+                  </div>
+
+                  <!-- Pink Line Tilt -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Pink Tilt (Bass ↔ Treble)</span>
+                      <span id="val-bias-pink" class="dev-val">Bass Tilt</span>
+                    </div>
+                    <input type="range" id="slider-bias-pink" min="0.0" max="1.0" step="0.05" value="0.35" class="dev-slider">
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT COLUMN: VECTOR ORBS / BALLS SETTINGS -->
+              <div class="dev-col dev-col-balls">
+                <div class="dev-col-header">
+                  <div class="dev-col-badge text-pink">
+                    <i class="ri-bubble-chart-line"></i>
+                    <span>Balls Settings</span>
+                  </div>
+                  <span class="dev-col-sub">Particle Matrix</span>
+                </div>
+                <div class="dev-col-controls">
+                  <!-- Ball (Orb) Count -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Ball (Orb) Count</span>
+                      <span id="val-ball-count" class="dev-val">18</span>
+                    </div>
+                    <input type="range" id="slider-ball-count" min="0" max="50" step="2" value="18" class="dev-slider">
+                  </div>
+
+                  <!-- Ball Smoothing / Damping -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Orb Smoothing</span>
+                      <span id="val-ball-smoothing" class="dev-val">0.35</span>
+                    </div>
+                    <input type="range" id="slider-ball-smoothing" min="0.05" max="0.95" step="0.05" value="0.35" class="dev-slider">
+                  </div>
+
+                  <!-- Ball Size -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Ball Size</span>
+                      <span id="val-ball-size" class="dev-val">8px</span>
+                    </div>
+                    <input type="range" id="slider-ball-size" min="2" max="24" step="1" value="8" class="dev-slider">
+                  </div>
+
+                  <!-- Ball Speed -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Ball Speed</span>
+                      <span id="val-ball-speed" class="dev-val">1.0x</span>
+                    </div>
+                    <input type="range" id="slider-ball-speed" min="0.2" max="3.0" step="0.1" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Ball Reactivity -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Spectrum Reactivity</span>
+                      <span id="val-ball-react" class="dev-val">1.2x</span>
+                    </div>
+                    <input type="range" id="slider-ball-react" min="0.2" max="3.0" step="0.1" value="1.2" class="dev-slider">
+                  </div>
+
+                  <!-- Continuous Spin -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Continuous Spin</span>
+                      <span id="val-effects-spin" class="dev-val">0.00</span>
+                    </div>
+                    <input type="range" id="slider-effects-spin" min="-2.0" max="2.0" step="0.1" value="0.0" class="dev-slider">
+                  </div>
+
+                  <!-- Kaleidoscope Folds -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Kaleidoscope Folds</span>
+                      <span id="val-kaleidoscope" class="dev-val">Off</span>
+                    </div>
+                    <input type="range" id="slider-kaleidoscope" min="0" max="8" step="2" value="0" class="dev-slider">
+                  </div>
+
+                  <!-- Ambient Dust Sub-section -->
+                  <div class="dev-section-divider">
+                    <span><i class="ri-sparkling-line"></i> Ambient Dust</span>
+                    <span class="dev-col-sub">Starfield</span>
+                  </div>
+
+                  <!-- Dust Particle Count -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Dust Count</span>
+                      <span id="val-dust-count" class="dev-val">28</span>
+                    </div>
+                    <input type="range" id="slider-dust-count" min="0" max="80" step="2" value="28" class="dev-slider">
+                  </div>
+
+                  <!-- Dust Speed -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Dust Speed</span>
+                      <span id="val-dust-speed" class="dev-val">1.0x</span>
+                    </div>
+                    <input type="range" id="slider-dust-speed" min="0.1" max="3.0" step="0.1" value="1.0" class="dev-slider">
+                  </div>
+
+                  <!-- Dust Size -->
+                  <div class="dev-control-item">
+                    <div class="dev-label-row">
+                      <span class="dev-label">Dust Size</span>
+                      <span id="val-dust-size" class="dev-val">1.5px</span>
+                    </div>
+                    <input type="range" id="slider-dust-size" min="0.5" max="5.0" step="0.1" value="1.5" class="dev-slider">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -337,6 +651,7 @@
   <script src="hardware_simulation/hardware-registry.js"></script>
   <script src="hardware_simulation/bgm-player.js"></script>
   <script src="hardware_simulation/hardware-drawer.js"></script>
+  <script src="hardware_simulation/visualizer-dev-panel.js"></script>
 
   <!-- Modularized Intro & View Process Pipeline -->
   <script src="intro/stage-loader.js"></script>
@@ -350,6 +665,7 @@
   <!-- Modularized Spatial 3D Engine -->
   <script src="spatial_engine/camera-controller.js"></script>
   <script src="spatial_engine/viewport-3d-renderer.js"></script>
+  <script src="spatial_engine/visualizer-settings.js"></script>
   <script src="spatial_engine/spatial-grid-canvas.js"></script>
   <script src="spatial_engine/spatial-manager.js"></script>
 

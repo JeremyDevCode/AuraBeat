@@ -44,7 +44,9 @@ window.AuraBeatHardware = window.AuraBeatHardware || {};
 
       document.addEventListener('click', (e) => {
         const capsuleRoot = document.getElementById('sim-capsule-root');
-        if (this.isDrawerOpen && capsuleRoot && !capsuleRoot.contains(e.target)) {
+        const devPanel = document.getElementById('bgm-dev-panel');
+        if (window._suppressDrawerCloseUntil && Date.now() < window._suppressDrawerCloseUntil) return;
+        if (this.isDrawerOpen && capsuleRoot && !capsuleRoot.contains(e.target) && (!devPanel || !devPanel.contains(e.target))) {
           this.toggleDrawer(false);
         }
       });

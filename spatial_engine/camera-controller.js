@@ -26,6 +26,7 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
       this.listeners = [];
       this.targetElement = null;
       this.animationFrameId = null;
+      this._camState = { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0, isDragging: false };
     }
 
     init(targetElement) {
@@ -90,17 +91,25 @@ window.AuraBeatSpatial = window.AuraBeatSpatial || {};
     }
 
     startLoop() {
+      const state = this._camState;
       const update = () => {
-        this.yaw += (this.targetYaw - this.yaw) * this.damping;
-        this.pitch += (this.targetPitch - this.pitch) * this.damping;
+        const deltaYaw = this.targetYaw - this.yaw;
+        const deltaPitch = this.targetPitch - this.pitch;
 
-        this.listeners.forEach(fn => fn({
-          yaw: this.yaw,
-          pitch: this.pitch,
-          targetYaw: this.targetYaw,
-          targetPitch: this.targetPitch,
-          isDragging: this.isRightDragging
-        }));
+        if (Math.abs(deltaYaw) > 0.001 || Math.abs(deltaPitch) > 0.001 || this.isRightDragging !== state.isDragging) {
+          this.yaw += deltaYaw * this.damping;
+          this.pitch += deltaPitch * this.damping;
+
+          state.yaw = this.yaw;
+          state.pitch = this.pitch;
+          state.targetYaw = this.targetYaw;
+          state.targetPitch = this.targetPitch;
+          state.isDragging = this.isRightDragging;
+
+          for (let i = 0; i < this.listeners.length; i++) {
+            this.listeners[i](state);
+          }
+        }
 
         this.animationFrameId = requestAnimationFrame(update);
       };

@@ -24,6 +24,8 @@
   <script src="../core_engine/ost-color-blender.js"></script>
   <script src="../core_engine/auramap-parser.js"></script>
   <script src="../core_engine/telemetry-recorder.js"></script>
+  <script src="../spatial_engine/visualizer-settings.js"></script>
+  <script src="../spatial_engine/spatial-grid-canvas.js"></script>
 
   <script>
     const output = document.getElementById('test-output');
@@ -101,6 +103,63 @@
     const exportData = rec.stopRecording(120000, 98.5);
     assert(exportData.recordVersion === "1.0", ".aurarec format version is 1.0");
     assert(exportData.frameTelemetry.length === 1, ".aurarec telemetry recorded frame data");
+
+    // 8. Visualizer Settings & Profile CRUD Suite
+    const vs = window.AuraBeatSpatial.VisualizerSettings;
+    assert(vs !== undefined, "VisualizerSettings module loaded");
+    assert(vs.getParams().lines.amplitude === 1.0, "Default visualizer line amplitude is 1.0x");
+    vs.setParam('lines', 'amplitude', 2.2);
+    assert(vs.getParams().lines.amplitude === 2.2, "Visualizer line amplitude parameter updates to 2.2x");
+    assert(vs.getParams().balls.smoothing === 0.35, "Default ball smoothing parameter is 0.35");
+    vs.setParam('balls', 'smoothing', 0.65);
+    assert(vs.getParams().balls.smoothing === 0.65, "Ball smoothing updates to 0.65");
+    assert(vs.getParams().activeProfile === 'default', "Default Spatial profile is active by default");
+    assert(vs.getProfiles().default.name === 'Default Spatial', "Default Spatial is the registered factory profile");
+    
+    // Profile CRUD tests
+    const customKey = vs.createProfile('Synthwave 84');
+    assert(vs.isCustomProfile(customKey) === true, "User can create and register custom profile");
+    vs.setParam('lines', 'waveSpeed', 2.5);
+    assert(vs.modifyActiveProfile() === true, "User can modify and persist active custom profile");
+    assert(vs.getParams().lines.waveSpeed === 2.5, "Custom profile updates parameters in memory and storage");
+    assert(vs.deleteProfile(customKey) === true, "User can delete custom profile");
+    assert(vs.getParams().activeProfile === 'default', "Deleting active profile cleanly falls back to default");
+
+    // 9. Spatial Visualizer Strings & Balls Recombined Layout Test
+    const sgc = window.AuraBeatSpatial.SpatialGridCanvas;
+    assert(sgc !== undefined, "SpatialGridCanvas module loaded");
+    sgc.reconcileEntities();
+    assert(sgc.strings.length >= 4, "SpatialGridCanvas reconciles harmonic string entities");
+    const s0Left = sgc.strings[0].nodes[0].x0 < 0;
+    const s1Right = sgc.strings[1].nodes[0].x0 > 0;
+    assert(s0Left && s1Right, "Harmonic strings are distributed on both Left and Right corridor sides");
+
+    const leftStrings = sgc.strings.filter(s => s.nodes[0].x0 < 0);
+    const rightStrings = sgc.strings.filter(s => s.nodes[0].x0 > 0);
+    const leftHasBass = leftStrings.some(s => s.type === 'bass');
+    const leftHasTreble = leftStrings.some(s => s.type === 'treble');
+    const rightHasBass = rightStrings.some(s => s.type === 'bass');
+    const rightHasTreble = rightStrings.some(s => s.type === 'treble');
+    assert(leftHasBass && leftHasTreble, "Left corridor combines both bass (pink) and treble (cyan) strings");
+    assert(rightHasBass && rightHasTreble, "Right corridor combines both bass (pink) and treble (cyan) strings");
+
+    const orbSamples = Array.from({ length: 30 }, () => {
+      const orb = new sgc.orbs[0].constructor(1000, 1000);
+      return orb.x;
+    });
+    const hasNegative = orbSamples.some(x => x < 0);
+    const hasPositive = orbSamples.some(x => x > 0);
+    assert(hasNegative && hasPositive, "Balls (Vector Orbs) span both negative and positive horizontal space (combined field)");
+
+    // 10. Ambient Dust Parameters Test
+    assert(vs.getParams().dust !== undefined, "VisualizerSettings defines dust configuration");
+    assert(vs.getParams().dust.count === 28, "Default dust count is 28 particles");
+    vs.setParam('dust', 'count', 42);
+    vs.setParam('dust', 'speed', 1.8);
+    vs.setParam('dust', 'size', 2.4);
+    assert(vs.getParams().dust.count === 42, "Dust count parameter updates to 42");
+    assert(vs.getParams().dust.speed === 1.8, "Dust speed parameter updates to 1.8x");
+    assert(vs.getParams().dust.size === 2.4, "Dust size parameter updates to 2.4px");
 
     summary.textContent = `TEST RESULTS: ${passed}/${total} TESTS PASSED (100% GREEN)`;
     summary.style.color = passed === total ? '#00e676' : '#ff3366';

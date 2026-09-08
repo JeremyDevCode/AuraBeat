@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-cyan.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-AR%20Glasses%20%7C%20VR%20%26%20XR%20Headsets-00f2fe.svg)](#-target-hardware-simulation-matrix)
-[![Hackathon](https://img.shields.io/badge/CLAD%20Summer%20Hackathon-Ambient%20Suite%20Track-ff007f.svg)](#-the-clad-summer-hackathon-developer-roadmap--ambient-suite-ecosystem)
+[![Architecture](https://img.shields.io/badge/Architecture-Web--Based%20Spatial%20Simulation-00f2fe.svg)](#-developer-learnings--spatial-web-prototyping-architecture)
 [![Audio](https://img.shields.io/badge/Audio-23%20Opus%20Tracks%20(193kbps)-a855f7.svg)](#-features--architecture-highlights)
 [![Modularity](https://img.shields.io/badge/Modularity-%3C%20300%20LOC%20Per%20File%20(100%25%20Green)-00e676.svg)](#-project-structure)
 [![Zero-Build](https://img.shields.io/badge/Build-Pure%20Vanilla%20Web%20(Zero--Build)-blue.svg)](#-running-locally)
@@ -19,65 +19,27 @@
 
 ---
 
-## 🌟 The CLAD Summer Hackathon, Developer Roadmap & Ambient Suite Ecosystem
+## 💡 Developer Learnings & Spatial Web Prototyping Architecture
 
 > [!NOTE]
-> **Current Status & Temporary AuraBeat Sprint Pause (Sept 2026):**
-> With university **Exam Week commencing September 1st**, academic preparation takes top priority. To balance study commitments with ambitious software innovation, active development on AuraBeat's rhythm gameplay is temporarily **postponed** to allocate focused energy toward **The CLAD Summer Hackathon** to engineer a rough prototype of the **Ambient Suite**.
+> **A Transparent Retrospective from the Developer:**
+> While the ambition was to push toward external milestones (including earlier plans for the CLAD Summer Hackathon), academic university exams, time constraints, and procrastination prevented submission. However, this development phase provided essential technical revelations on AI-assisted spatial engineering, token economy, and software architecture.
 
 ---
 
-### 🎯 The Challenge: Balancing Exams, Hackathon Innovation & Personal Accountability
-As a solo independent developer at **AuraLabs Studio**, balancing rigorous academic exams with competitive engineering requires ruthless discipline. Studies take the highest precedence—and every remaining hour of focus is dedicated to bringing the **Ambient Suite** to life during The CLAD Summer Hackathon.
+### 🧠 Key Engineering Learnings: Context Tokens & Tooling Efficiency
 
-> [!TIP]
-> **A Transparent Note from the Developer:**
-> While winning the hackathon is far from guaranteed—especially under tight exam constraints—participating is an invaluable personal milestone. I have often struggled with severe procrastination and keeping up with development timelines. Taking on this challenge serves as a vital **accountability forcing function** to build discipline, push through executive dysfunction, and turn abstract spatial ideas into tangible working code.
+1. **Heavy Native Spatial Engines (Lens Studio) vs. Token Economy in AntiGravity IDE:**
+   - Developing directly within heavy native spatial software suites (such as Snap Lens Studio) involves massive proprietary project trees, dense asset bundles, and binary configurations. In **AntiGravity IDE**, these structures consume massive context windows that rapidly burn through model percentage and token quotas.
+   - Engineering with **Pure Vanilla Web (HTML5, Canvas 2D/WebGL, ES6 Modules)** is drastically more token-efficient. Clean, human-readable source files under `< 300 LOC` allow AI pair-programming agents to read, modify, and verify code with minimal token consumption and zero compilation delays.
 
----
+2. **Multi-Model Strategy & Tooling Exploration:**
+   - Rather than exclusively relying on Gemini 3.8 Flash (High) across heavy native contexts, future workflows will diversify across specialized contributor models (e.g., Meta Spark 1.3 Contributor and dedicated code-generation models) tailored to specific platform tasks without exhausting session tokens.
 
-### 🌌 The Vision: The Ambient Suite Ecosystem
-The **Ambient Suite** is an offline-first, privacy-respecting spatial computing & personal telemetry ecosystem designed for lightweight smart glasses and mobile companion hosts:
-
-```
-                      ┌─────────────────────────────────┐
-                      │          AMBIENT TRACK          │
-                      │  (Central Hub, Task Tree,       │
-                      │   Grant Ledger, Pearson Engine) │
-                      └───────────────┬─────────────────┘
-                                      │ (On-Demand Content Providers)
-         ┌────────────────────────────┼────────────────────────────┐
-         ▼                            ▼                            ▼
-┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
-│  DAILY AMBIENT   │        │  SPORT AMBIENT   │        │   LENS AMBIENT   │
-│  Biometrics, SQI,│        │  HR Zones, VO2,  │        │  Gemini Vision,  │
-│  IoT (BLE/UDP)   │        │  Low-Latency BLE │        │  Homography, ESWF│
-└──────────────────┘        └──────────────────┘        └──────────────────┘
-```
-
-1. **Daily Ambient (Biometric & IoT Sentinel):**
-   - Direct BLE GATT ingestion (Xiaomi S400 Scale, Smartwatch) and local encrypted UDP bypass for smart appliances.
-   - Deterministic mathematical models: Body Mass Index (BMI), Mifflin-St Jeor Basal Metabolic Rate (BMR), and weighted Sleep Quality Index (SQI).
-2. **Ambient Track (Central Hub & Correlation Engine):**
-   - Hierarchical non-linear Task Tree with Recursive Completion Factor (TTCF) mathematics.
-   - Cross-Domain Pearson Correlation ($r_{xy}$) linking physiological variables (sleep, glycemic index) to daily cognitive task velocity.
-   - Local-first SQLite Write-Ahead Logging (WAL) and audit-grade grant expenditure ledger.
-3. **Sport Ambient (Spatial Athletic HUD):**
-   - Real-time athletic stress telemetry using Tanaka Max HR, Karvonen Target Heart Rate zones, and rolling Uth-Sørensen $VO_2\text{ Max}$ estimation.
-   - Glanceable, color-vignetted peripheral HUD casting to smart glasses with sub-5ms latency.
-4. **Lens Ambient (Multimodal Spatial Vision):**
-   - Passive context capture via smart glasses camera using Gemini Multimodal API structured JSON parsing.
-   - Planar Homography Matrix ($H$) for distortion-free head-tracking HUD alignment and Energy Slump Warning Factor (ESWF) metabolic alerts.
-
----
-
-### 👓 The Hardware Mission: Funding the XREAL One Pro
-A critical challenge in developing spatial computing software like **AuraBeat** and the **Ambient Suite** is being **restricted to standard 2D flat displays**. Simulating 3DoF/6DoF optics, monocular HUD viewports, and peripheral vision cues on flat screens requires extensive emulation layers.
-
-Competing in **The CLAD Summer Hackathon** is aimed at unlocking the resources needed to acquire true wearable AR hardware—specifically the **XREAL One Pro**:
-1. **Accelerate AuraBeat & Ambient Suite Development:** Transitioning directly from 2D widescreen simulation to native DisplayPort Alt-Mode casting, NRSDK spatial anchors, and real Micro-OLED birdbath optics.
-2. **Conquer Procrastination & Supercharge Daily Productivity:** Creating a floating, distraction-free spatial workspace to organize daily study schedules, task trees, and engineering sprints without physical monitor limits.
-3. **True Spatial Progressive HUD Validation:** Validating Easy Mode (Peripheral Guardian), Advanced Mode (Metrics Grid), and Expert Mode (Diagnostic Engine) in real-world ambient lighting.
+3. **Why Web-Based Prototyping Remains AuraBeat's Core Foundation:**
+   - **Low Token Footprint:** AntiGravity IDE operates with maximum responsiveness and precision when working with clean, modular web files.
+   - **Zero Build Latency:** Instant verification and hot-reloading in any standard browser without SDK compiler overhead.
+   - **High-Fidelity Math & Optics Validation:** Real-time Cubic Hermite splines, 3-band FFT PCM audio reactivity, optical FOV lens apertures, and multi-device telemetry can all be mathematically proven, validated, and stress-tested on the web—ready for streamlined native porting to Android XR, Meta Horizon OS, and WebXR as physical hardware becomes available.
 
 ---
 
@@ -146,9 +108,10 @@ AuraBeat/
 │   ├── spline-interpolator.js   # Cubic Hermite Spline Trajectory Interpolator
 │   └── telemetry-recorder.js    # Performance Telemetry & Hardware Profiler
 ├── hardware_simulation/         # Hardware Simulation & BGM Modules
-│   ├── bgm-player.js            # 23-Track Opus BGM Jukebox Player (< 250 LOC)
+│   ├── bgm-player.js            # 23-Track Opus BGM Jukebox Player (< 280 LOC)
 │   ├── hardware-drawer.js       # Dynamic Island Capsule Morphing Drawer (< 160 LOC)
 │   ├── hardware-registry.js     # Calibration Matrices for XREAL, VITURE, Quest, Samsung
+│   ├── visualizer-dev-panel.js  # Detachable Studio Panel & Live Telemetry Controls (< 290 LOC)
 │   ├── meta_quest_3.json        # Hardware Profile: Meta Quest 3
 │   ├── meta_quest_3s.json       # Hardware Profile: Meta Quest 3S
 │   ├── samsung_galaxy_xr.json   # Hardware Profile: Samsung Galaxy XR
@@ -167,11 +130,13 @@ AuraBeat/
 │   └── ui-selection.js          # Stage 4 Spatial UI Framework Selector
 ├── spatial_engine/              # 3D Spatial Vector & Camera Engine
 │   ├── camera-controller.js     # 3DoF First-Person Head-Look Drag Controller
-│   ├── spatial-grid-canvas.js   # Frequency-Reactive Vector Gradient Orbs
+│   ├── spatial-grid-canvas.js   # Full-Audio Spectrum Strings, Vector Orbs & Ambient Dust (< 300 LOC)
 │   ├── spatial-manager.js       # 3D Spatial Scene Coordinator
-│   └── viewport-3d-renderer.js  # 3D Optical Matrix Viewport Renderer
+│   ├── viewport-3d-renderer.js  # 3D Optical Matrix Viewport Renderer
+│   └── visualizer-settings.js   # Parametric Profiles & Storage Persistence (< 210 LOC)
 ├── tests/                       # Automated Quality & Modularity Test Suites
 │   ├── audit_loc.ps1            # PowerShell LOC Enforcement Audit (< 300 LOC)
+│   ├── run_tests.ps1            # Headless Chrome Automated Test Runner
 │   ├── test-suite.js            # Automated Assertion Test Runner
 │   └── test_runner.html         # In-Browser Graphical Test Suite
 ├── LICENSE                      # MIT Open Source License

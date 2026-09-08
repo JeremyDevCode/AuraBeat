@@ -113,45 +113,65 @@ document.addEventListener('DOMContentLoaded', () => {
       this.color = Math.random() > 0.5 ? '#00f2fe' : '#4facfe';
       this.speed = Math.random() * 1.2 + 0.4;
     }
-    update(bpmRatio) {
-      this.z -= this.speed * beatPulse * (bpmRatio || 1.0);
+    update(bpmRatio, speedScale) {
+      this.z -= this.speed * beatPulse * (bpmRatio || 1.0) * (speedScale || 1.0);
       if (this.z <= 0) { this.reset(); this.z = width; }
     }
-    draw() {
+    draw(sizeScale) {
       const cx = width / 2;
       const cy = height / 2;
       const screenX = (this.x / this.z) * 420 + cx;
       const screenY = (this.y / this.z) * 420 + cy;
-      const radius = (1 - this.z / width) * this.size * 1.6 * beatPulse;
+      const radius = (1 - this.z / width) * this.size * (sizeScale || 1.0) * beatPulse;
       const alpha = (1 - this.z / width) * 0.85;
 
       if (screenX >= 0 && screenX <= width && screenY >= 0 && screenY <= height && radius > 0.4) {
-        ctx.save();
-        ctx.globalAlpha = Math.min(1, alpha);
+        ctx.globalAlpha = alpha > 1.0 ? 1.0 : (alpha < 0 ? 0 : alpha);
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(screenX, screenY, Math.max(0.8, radius), 0, Math.PI * 2);
+        ctx.arc(screenX, screenY, radius > 0.8 ? radius : 0.8, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
       }
     }
   }
 
   for (let i = 0; i < 28; i++) particles.push(new VectorParticle());
+  const fallbackEnergy = { beatPulse: 1.0, bpmRatio: 1.0 };
+
+  function reconcileDust() {
+    const vs = window.AuraBeatSpatial && window.AuraBeatSpatial.VisualizerSettings;
+    const p = vs ? vs.getParams() : null;
+    const target = (p && p.dust && p.dust.enabled) ? (p.dust.count !== undefined ? p.dust.count : 28) : 28;
+    while (particles.length < target) particles.push(new VectorParticle());
+    if (particles.length > target) particles.length = target;
+  }
 
   function animateCanvas() {
     ctx.clearRect(0, 0, width, height);
 
     const energy = (window.AuraBeatHardware && window.AuraBeatHardware.BgmPlayer)
       ? window.AuraBeatHardware.BgmPlayer.getAudioEnergy()
-      : { beatPulse: 1.0, bpmRatio: 1.0 };
+      : fallbackEnergy;
     beatPulse = energy.beatPulse || 1.0;
     const bpmRatio = energy.bpmRatio || 1.0;
 
+    const renderDust = () => {
+      reconcileDust();
+      const vs = window.AuraBeatSpatial && window.AuraBeatSpatial.VisualizerSettings;
+      const d = (vs && vs.getParams() && vs.getParams().dust) ? vs.getParams().dust : { speed: 1.0, size: 1.5 };
+      const sScale = (d.size || 1.5) / 1.5;
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update(bpmRatio, d.speed);
+        particles[i].draw(sScale);
+      }
+    };
+
     if (window.AuraBeatSpatial && window.AuraBeatSpatial.SpatialGridCanvas) {
-      window.AuraBeatSpatial.SpatialGridCanvas.drawSpatialGrid(ctx, width, height, beatPulse);
+      window.AuraBeatSpatial.SpatialGridCanvas.drawSpatialGrid(ctx, width, height, beatPulse, renderDust);
+    } else {
+      renderDust();
     }
-    particles.forEach(p => { p.update(bpmRatio); p.draw(); });
+    ctx.globalAlpha = 1.0;
     requestAnimationFrame(animateCanvas);
   }
   animateCanvas();
